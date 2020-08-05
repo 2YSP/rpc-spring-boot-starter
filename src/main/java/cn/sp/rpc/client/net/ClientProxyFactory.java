@@ -71,7 +71,7 @@ public class ClientProxyFactory {
             if (services == null || services.size() == 0){
                 throw new RpcException("No provider available!");
             }
-
+            // todo 完善负载均衡算法
            // 随机选择一个服务提供者（软负载均衡）
             Service service = services.get(random.nextInt(services.size()));
 
