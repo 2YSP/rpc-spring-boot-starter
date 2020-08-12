@@ -28,5 +28,13 @@ public class RpcConstant {
      * protobuf序列化协议
      */
     public static final String PROTOCOL_PROTOBUF = "protobuf";
+    /**
+     * 随机
+     */
+    public static final String BALANCE_RANDOM = "random";
+    /**
+     * 轮询
+     */
+    public static final String BALANCE_ROUND = "round";
 
 }

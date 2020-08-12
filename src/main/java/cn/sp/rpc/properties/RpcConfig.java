@@ -22,7 +22,19 @@ public class RpcConfig {
      * 服务协议
      */
     private String protocol = "java";
+    /**
+     * 负载均衡算法
+     */
+    private String loadBalance = "random";
 
+
+    public String getLoadBalance() {
+        return loadBalance;
+    }
+
+    public void setLoadBalance(String loadBalance) {
+        this.loadBalance = loadBalance;
+    }
 
     public String getRegisterAddress() {
         return registerAddress;

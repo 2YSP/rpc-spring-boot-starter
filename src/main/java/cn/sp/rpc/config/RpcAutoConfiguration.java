@@ -1,5 +1,8 @@
 package cn.sp.rpc.config;
 
+import cn.sp.rpc.client.balance.FullRoundBalance;
+import cn.sp.rpc.client.balance.LoadBalance;
+import cn.sp.rpc.client.balance.RandomBalance;
 import cn.sp.rpc.client.discovery.ZookeeperServiceDiscovery;
 import cn.sp.rpc.client.net.ClientProxyFactory;
 import cn.sp.rpc.client.net.NettyNetClient;
@@ -77,9 +80,17 @@ public class RpcAutoConfiguration {
         supportMessageProtocols.put(RpcConstant.PROTOCOL_JAVA,new JavaSerializeMessageProtocol());
         supportMessageProtocols.put(RpcConstant.PROTOCOL_PROTOBUF,new ProtoBufMessageProtocol());
         clientProxyFactory.setSupportMessageProtocols(supportMessageProtocols);
-
+        // 设置负载均衡算法
+        if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_RANDOM)){
+            clientProxyFactory.setLoadBalance(new RandomBalance());
+        }else if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_ROUND)){
+            clientProxyFactory.setLoadBalance(new FullRoundBalance());
+        }else {
+            throw new RpcException("invalid load balance config");
+        }
         // 设置网络层实现
         clientProxyFactory.setNetClient(new NettyNetClient());
+
         return clientProxyFactory;
     }
 

@@ -1,5 +1,7 @@
 package cn.sp.rpc.client.net;
 
+import cn.sp.rpc.client.balance.FullRoundBalance;
+import cn.sp.rpc.client.balance.LoadBalance;
 import cn.sp.rpc.client.discovery.ServerDiscovery;
 import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.protocol.MessageProtocol;
@@ -32,6 +34,8 @@ public class ClientProxyFactory {
 
     private Map<Class<?>,Object> objectCache = new HashMap<>();
 
+    private LoadBalance loadBalance;
+
     /**
      * 通过Java动态代理获取服务代理类
      * @param clazz
@@ -48,8 +52,6 @@ public class ClientProxyFactory {
     private class ClientInvocationHandler implements InvocationHandler{
 
         private Class<?> clazz;
-
-        private Random random = new Random();
 
         public ClientInvocationHandler(Class<?> clazz){
             this.clazz = clazz;
@@ -72,8 +74,7 @@ public class ClientProxyFactory {
                 throw new RpcException("No provider available!");
             }
             // todo 完善负载均衡算法
-           // 随机选择一个服务提供者（软负载均衡）
-            Service service = services.get(random.nextInt(services.size()));
+            Service service = loadBalance.chooseOne(services);
 
             // 2.构造request对象
             RpcRequest request = new RpcRequest();
@@ -101,6 +102,13 @@ public class ClientProxyFactory {
     }
 
 
+    public LoadBalance getLoadBalance() {
+        return loadBalance;
+    }
+
+    public void setLoadBalance(LoadBalance loadBalance) {
+        this.loadBalance = loadBalance;
+    }
 
     public ServerDiscovery getServerDiscovery() {
         return serverDiscovery;
