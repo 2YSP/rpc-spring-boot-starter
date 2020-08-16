@@ -1,5 +1,7 @@
 package cn.sp.rpc.client.balance;
 
+import cn.sp.rpc.annotation.LoadBalanceAno;
+import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.Service;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Map;
 /**
  * 平滑加权轮询
  */
+@LoadBalanceAno(RpcConstant.BALANCE_SMOOTH_WEIGHT_ROUND)
 public class SmoothWeightRoundBalance implements LoadBalance {
     /**
      * key:服务value:当前权重

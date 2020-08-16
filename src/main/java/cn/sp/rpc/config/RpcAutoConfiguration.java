@@ -1,5 +1,6 @@
 package cn.sp.rpc.config;
 
+import cn.sp.rpc.annotation.LoadBalanceAno;
 import cn.sp.rpc.client.balance.*;
 import cn.sp.rpc.client.discovery.ZookeeperServiceDiscovery;
 import cn.sp.rpc.client.net.ClientProxyFactory;
@@ -20,9 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 /**
  * 注入需要的bean
@@ -81,21 +85,31 @@ public class RpcAutoConfiguration {
         supportMessageProtocols.put(RpcConstant.PROTOCOL_PROTOBUF,new ProtoBufMessageProtocol());
         clientProxyFactory.setSupportMessageProtocols(supportMessageProtocols);
         // 设置负载均衡算法
-        if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_RANDOM)){
-            clientProxyFactory.setLoadBalance(new RandomBalance());
-        }else if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_ROUND)){
-            clientProxyFactory.setLoadBalance(new FullRoundBalance());
-        }else if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_WEIGHT_ROUND)){
-            clientProxyFactory.setLoadBalance(new WeightRoundBalance());
-        }else if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_SMOOTH_WEIGHT_ROUND)){
-            clientProxyFactory.setLoadBalance(new SmoothWeightRoundBalance());
-        }else {
-            throw new RpcException("invalid load balance config");
-        }
+        LoadBalance loadBalance = getLoadBalance(rpcConfig.getLoadBalance());
+        clientProxyFactory.setLoadBalance(loadBalance);
         // 设置网络层实现
         clientProxyFactory.setNetClient(new NettyNetClient());
 
         return clientProxyFactory;
+    }
+
+    /**
+     * 使用spi匹配符合配置的负载均衡算法
+     * @param name
+     * @return
+     */
+    private LoadBalance getLoadBalance(String name){
+        ServiceLoader<LoadBalance> loader = ServiceLoader.load(LoadBalance.class);
+        Iterator<LoadBalance> iterator = loader.iterator();
+        while (iterator.hasNext()){
+            LoadBalance loadBalance = iterator.next();
+            LoadBalanceAno ano = loadBalance.getClass().getAnnotation(LoadBalanceAno.class);
+            Assert.notNull(ano,"load balance name can not be empty!");
+            if (name.equals(ano.value())){
+                return loadBalance;
+            }
+        }
+        throw new RpcException("invalid load balance config");
     }
 
     @Bean
