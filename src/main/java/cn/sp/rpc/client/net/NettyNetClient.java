@@ -48,7 +48,7 @@ public class NettyNetClient implements NetClient {
             // 启用客户端连接
             b.connect(serverAddress,Integer.parseInt(serverPort)).sync();
             respData = (byte[]) sendHandler.respData();
-            logger.info("SendRequest get reply: {}", respData);
+            logger.debug("SendRequest get reply: {}", respData);
         }finally {
             loopGroup.shutdownGracefully();
         }

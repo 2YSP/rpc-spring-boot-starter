@@ -15,7 +15,6 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * 客户端代理工厂：用于创建远程服务代理类
@@ -73,7 +72,6 @@ public class ClientProxyFactory {
             if (services == null || services.size() == 0){
                 throw new RpcException("No provider available!");
             }
-            // todo 完善负载均衡算法
             Service service = loadBalance.chooseOne(services);
 
             // 2.构造request对象

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +38,11 @@ public class SendHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        logger.info("Connect to server successfully:{}",ctx);
+        logger.debug("Connect to server successfully:{}",ctx);
         ByteBuf reqBuf = Unpooled.buffer(data.length);
         reqBuf.writeBytes(data);
 //        ByteBuf reqBuf = Unpooled.copiedBuffer(data);
-        logger.info("Client sends message:{}",reqBuf);
+        logger.debug("Client sends message:{}",reqBuf);
         ctx.writeAndFlush(reqBuf);
     }
 
@@ -53,10 +54,12 @@ public class SendHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.info("Client reads message:{}",msg);
+        logger.debug("Client reads message:{}",msg);
         ByteBuf byteBuf = (ByteBuf) msg;
         byte[] resp = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(resp);
+        // 手动回收
+        ReferenceCountUtil.release(byteBuf);
         readMsg = resp;
         cdl.countDown();
     }

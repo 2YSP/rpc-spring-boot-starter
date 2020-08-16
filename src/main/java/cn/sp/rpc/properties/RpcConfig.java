@@ -26,7 +26,18 @@ public class RpcConfig {
      * 负载均衡算法
      */
     private String loadBalance = "random";
+    /**
+     * 权重，默认为1
+     */
+    private Integer weight = 1;
 
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
 
     public String getLoadBalance() {
         return loadBalance;

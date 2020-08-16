@@ -14,8 +14,8 @@ import static cn.sp.rpc.common.constants.RpcConstant.UTF_8;
 import static cn.sp.rpc.common.constants.RpcConstant.ZK_SERVICE_PATH;
 
 /**
- *
  * zk服务注册器，提供服务注册、暴露服务的能力
+ *
  * @author 2YSP
  * @date 2020/7/26 13:26
  */
@@ -23,15 +23,17 @@ public class ZookeeperServerRegister extends DefaultServerRegister {
 
     private ZkClient zkClient;
 
-    public ZookeeperServerRegister(String zkAddress,Integer port,String protocol){
+    public ZookeeperServerRegister(String zkAddress, Integer port, String protocol, Integer weight) {
         zkClient = new ZkClient(zkAddress);
         zkClient.setZkSerializer(new ZookeeperSerializer());
         this.port = port;
         this.protocol = protocol;
+        this.weight = weight;
     }
 
     /**
      * 服务注册
+     *
      * @param so
      * @throws Exception
      */
@@ -40,33 +42,35 @@ public class ZookeeperServerRegister extends DefaultServerRegister {
         super.register(so);
         Service service = new Service();
         String host = InetAddress.getLocalHost().getHostAddress();
-        String address = host +":"+ port;
+        String address = host + ":" + port;
         service.setAddress(address);
         service.setName(so.getClazz().getName());
         service.setProtocol(protocol);
+        service.setWeight(this.weight);
         this.exportService(service);
     }
 
     /**
      * 服务暴露(其实就是把服务信息保存到Zookeeper上)
+     *
      * @param serviceResource
      */
-    private void exportService(Service serviceResource){
+    private void exportService(Service serviceResource) {
         String serviceName = serviceResource.getName();
         String uri = JSON.toJSONString(serviceResource);
         try {
             uri = URLEncoder.encode(uri, UTF_8);
-        }catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String servicePath = ZK_SERVICE_PATH + PATH_DELIMITER + serviceName +"/service";
-        if (!zkClient.exists(servicePath)){
+        String servicePath = ZK_SERVICE_PATH + PATH_DELIMITER + serviceName + "/service";
+        if (!zkClient.exists(servicePath)) {
             // 没有该节点就创建
-            zkClient.createPersistent(servicePath,true);
+            zkClient.createPersistent(servicePath, true);
         }
 
         String uriPath = servicePath + PATH_DELIMITER + uri;
-        if (zkClient.exists(uriPath)){
+        if (zkClient.exists(uriPath)) {
             // 删除之前的节点
             zkClient.delete(uriPath);
         }

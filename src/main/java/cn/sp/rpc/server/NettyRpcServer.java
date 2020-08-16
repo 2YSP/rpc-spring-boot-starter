@@ -16,6 +16,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class NettyRpcServer extends RpcServer {
 
             // 启动服务
             ChannelFuture future = b.bind(port).sync();
-            logger.info("Server started successfully.");
+            logger.debug("Server started successfully.");
             channel = future.channel();
             // 等待服务通道关闭
             future.channel().closeFuture().sync();
@@ -78,21 +79,24 @@ public class NettyRpcServer extends RpcServer {
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
-           logger.info("Channel active :{}",ctx);
+           logger.debug("Channel active :{}",ctx);
         }
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            logger.info("the server receives message :{}",msg);
+            logger.debug("the server receives message :{}",msg);
             ByteBuf byteBuf = (ByteBuf) msg;
             // 消息写入reqData
             byte[] reqData = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(reqData);
+            // 手动回收
+            ReferenceCountUtil.release(byteBuf);
             byte[] respData = requestHandler.handleRequest(reqData);
             ByteBuf respBuf = Unpooled.buffer(respData.length);
             respBuf.writeBytes(respData);
-            logger.info("Send response:{}",respBuf);
+            logger.debug("Send response:{}",respBuf);
             ctx.write(respBuf);
+
         }
 
         @Override

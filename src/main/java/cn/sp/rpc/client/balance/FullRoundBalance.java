@@ -1,6 +1,8 @@
 package cn.sp.rpc.client.balance;
 
 import cn.sp.rpc.common.model.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -9,10 +11,14 @@ import java.util.List;
  */
 public class FullRoundBalance implements LoadBalance {
 
-    private int index;
+    private static Logger logger = LoggerFactory.getLogger(FullRoundBalance.class);
+
+    private volatile int index;
 
     @Override
-    public Service chooseOne(List<Service> services) {
+    public synchronized Service chooseOne(List<Service> services) {
+        logger.debug("=========index:[{}]", index);
+        // 加锁防止多线程情况下，index超出services.size()
         if (index == services.size()) {
             index = 0;
         }

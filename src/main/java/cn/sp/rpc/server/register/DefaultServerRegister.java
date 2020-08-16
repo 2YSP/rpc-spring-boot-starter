@@ -15,6 +15,10 @@ public abstract class DefaultServerRegister implements ServerRegister {
 
     protected String protocol;
     protected Integer port;
+    /**
+     * 权重
+     */
+    protected Integer weight;
 
     @Override
     public void register(ServiceObject so) throws Exception {

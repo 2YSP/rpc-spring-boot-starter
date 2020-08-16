@@ -36,5 +36,13 @@ public class RpcConstant {
      * 轮询
      */
     public static final String BALANCE_ROUND = "round";
+    /**
+     * 加权轮询
+     */
+    public static final String BALANCE_WEIGHT_ROUND = "weightRound";
+    /**
+     * 平滑加权轮询
+     */
+    public static final String BALANCE_SMOOTH_WEIGHT_ROUND = "smoothWeightRound";
 
 }

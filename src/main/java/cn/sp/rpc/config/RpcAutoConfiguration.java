@@ -1,8 +1,6 @@
 package cn.sp.rpc.config;
 
-import cn.sp.rpc.client.balance.FullRoundBalance;
-import cn.sp.rpc.client.balance.LoadBalance;
-import cn.sp.rpc.client.balance.RandomBalance;
+import cn.sp.rpc.client.balance.*;
 import cn.sp.rpc.client.discovery.ZookeeperServiceDiscovery;
 import cn.sp.rpc.client.net.ClientProxyFactory;
 import cn.sp.rpc.client.net.NettyNetClient;
@@ -43,9 +41,11 @@ public class RpcAutoConfiguration {
 
     @Bean
     public ServerRegister serverRegister(@Autowired RpcConfig rpcConfig){
-        return new ZookeeperServerRegister(rpcConfig.getRegisterAddress(),
+        return new ZookeeperServerRegister(
+                rpcConfig.getRegisterAddress(),
                 rpcConfig.getServerPort(),
-                rpcConfig.getProtocol());
+                rpcConfig.getProtocol(),
+                rpcConfig.getWeight());
     }
 
     @Bean
@@ -85,6 +85,10 @@ public class RpcAutoConfiguration {
             clientProxyFactory.setLoadBalance(new RandomBalance());
         }else if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_ROUND)){
             clientProxyFactory.setLoadBalance(new FullRoundBalance());
+        }else if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_WEIGHT_ROUND)){
+            clientProxyFactory.setLoadBalance(new WeightRoundBalance());
+        }else if (rpcConfig.getLoadBalance().equals(RpcConstant.BALANCE_SMOOTH_WEIGHT_ROUND)){
+            clientProxyFactory.setLoadBalance(new SmoothWeightRoundBalance());
         }else {
             throw new RpcException("invalid load balance config");
         }
