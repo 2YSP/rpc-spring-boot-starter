@@ -1,4 +1,4 @@
-package cn.sp.rpc.client.discovery;
+package cn.sp.rpc.client.cache;
 
 import cn.sp.rpc.common.model.Service;
 

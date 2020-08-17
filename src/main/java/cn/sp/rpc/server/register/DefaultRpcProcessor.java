@@ -2,9 +2,15 @@ package cn.sp.rpc.server.register;
 
 import cn.sp.rpc.annotation.InjectService;
 import cn.sp.rpc.annotation.Service;
-import cn.sp.rpc.client.discovery.ServerDiscoveryCache;
+import cn.sp.rpc.client.cache.ServerDiscoveryCache;
+import cn.sp.rpc.client.discovery.ZkChildListenerImpl;
+import cn.sp.rpc.client.discovery.ZookeeperServerDiscovery;
 import cn.sp.rpc.client.net.ClientProxyFactory;
+import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.server.RpcServer;
+import org.I0Itec.zkclient.ZkClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -20,11 +26,15 @@ import java.util.Objects;
  */
 public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshedEvent> {
 
+    private static Logger logger = LoggerFactory.getLogger(DefaultRpcProcessor.class);
+
+
     private ClientProxyFactory clientProxyFactory;
 
     private ServerRegister serverRegister;
 
     private RpcServer rpcServer;
+
 
     public DefaultRpcProcessor(ClientProxyFactory clientProxyFactory, ServerRegister serverRegister, RpcServer rpcServer) {
         this.clientProxyFactory = clientProxyFactory;
@@ -70,7 +80,16 @@ public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshed
                 }
                 ServerDiscoveryCache.SERVICE_CLASS_NAMES.add(fieldClass.getName());
             }
-
+        }
+        // 注册子节点监听
+        if (clientProxyFactory.getServerDiscovery() instanceof ZookeeperServerDiscovery){
+            ZookeeperServerDiscovery serverDiscovery = (ZookeeperServerDiscovery) clientProxyFactory.getServerDiscovery();
+            ZkClient zkClient = serverDiscovery.getZkClient();
+            ServerDiscoveryCache.SERVICE_CLASS_NAMES.forEach(name ->{
+                String servicePath = RpcConstant.ZK_SERVICE_PATH + RpcConstant.PATH_DELIMITER + name + "/service";
+                zkClient.subscribeChildChanges(servicePath, new ZkChildListenerImpl());
+            });
+            logger.info("subscribe service zk node successfully");
         }
 
     }

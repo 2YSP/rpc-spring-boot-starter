@@ -20,7 +20,6 @@ public class FullRoundBalance implements LoadBalance {
 
     @Override
     public synchronized Service chooseOne(List<Service> services) {
-        logger.debug("=========index:[{}]", index);
         // 加锁防止多线程情况下，index超出services.size()
         if (index == services.size()) {
             index = 0;
