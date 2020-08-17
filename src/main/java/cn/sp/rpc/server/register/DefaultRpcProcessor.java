@@ -2,6 +2,7 @@ package cn.sp.rpc.server.register;
 
 import cn.sp.rpc.annotation.InjectService;
 import cn.sp.rpc.annotation.Service;
+import cn.sp.rpc.client.discovery.ServerDiscoveryCache;
 import cn.sp.rpc.client.net.ClientProxyFactory;
 import cn.sp.rpc.server.RpcServer;
 import org.springframework.context.ApplicationContext;
@@ -67,6 +68,7 @@ public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshed
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
+                ServerDiscoveryCache.SERVICE_CLASS_NAMES.add(fieldClass.getName());
             }
 
         }

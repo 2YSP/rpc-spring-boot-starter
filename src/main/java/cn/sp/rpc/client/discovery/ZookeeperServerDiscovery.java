@@ -5,6 +5,7 @@ import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.serializer.ZookeeperSerializer;
 import com.alibaba.fastjson.JSON;
 import org.I0Itec.zkclient.ZkClient;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  * @author 2YSP
  * @date 2020/7/25 19:49
  */
-public class ZookeeperServerDiscovery implements ServerDiscovery {
+public class ZookeeperServerDiscovery implements ServerDiscovery, InitializingBean {
 
     private ZkClient zkClient;
 
@@ -26,7 +27,14 @@ public class ZookeeperServerDiscovery implements ServerDiscovery {
     public ZookeeperServerDiscovery(String zkAddress) {
         zkClient = new ZkClient(zkAddress);
         zkClient.setZkSerializer(new ZookeeperSerializer());
-        zkClient.subscribeChildChanges(ZK_BASE_PATH, new ZkChildListenerImpl());
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ServerDiscoveryCache.SERVICE_CLASS_NAMES.forEach(name ->{
+            String servicePath = ZK_BASE_PATH + name + "/service";
+            zkClient.subscribeChildChanges(servicePath, new ZkChildListenerImpl());
+        });
     }
 
     /**
