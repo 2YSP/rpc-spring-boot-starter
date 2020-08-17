@@ -2,7 +2,7 @@ package cn.sp.rpc.config;
 
 import cn.sp.rpc.annotation.LoadBalanceAno;
 import cn.sp.rpc.client.balance.*;
-import cn.sp.rpc.client.discovery.ZookeeperServiceDiscovery;
+import cn.sp.rpc.client.discovery.ZookeeperServerDiscovery;
 import cn.sp.rpc.client.net.ClientProxyFactory;
 import cn.sp.rpc.client.net.NettyNetClient;
 import cn.sp.rpc.common.constants.RpcConstant;
@@ -77,7 +77,7 @@ public class RpcAutoConfiguration {
     public ClientProxyFactory proxyFactory(@Autowired RpcConfig rpcConfig){
         ClientProxyFactory clientProxyFactory = new ClientProxyFactory();
         // 设置服务发现着
-        clientProxyFactory.setServerDiscovery(new ZookeeperServiceDiscovery(rpcConfig.getRegisterAddress()));
+        clientProxyFactory.setServerDiscovery(new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress()));
 
         // 设置支持的协议
         Map<String, MessageProtocol> supportMessageProtocols = new HashMap<>();

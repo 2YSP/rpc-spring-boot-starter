@@ -1,8 +1,8 @@
 package cn.sp.rpc.client.net;
 
-import cn.sp.rpc.client.balance.FullRoundBalance;
 import cn.sp.rpc.client.balance.LoadBalance;
 import cn.sp.rpc.client.discovery.ServerDiscovery;
+import cn.sp.rpc.client.discovery.ServerDiscoveryCache;
 import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.protocol.MessageProtocol;
 import cn.sp.rpc.common.protocol.RpcRequest;
@@ -31,49 +31,46 @@ public class ClientProxyFactory {
 
     private Map<String, MessageProtocol> supportMessageProtocols;
 
-    private Map<Class<?>,Object> objectCache = new HashMap<>();
+    private Map<Class<?>, Object> objectCache = new HashMap<>();
 
     private LoadBalance loadBalance;
 
     /**
      * 通过Java动态代理获取服务代理类
+     *
      * @param clazz
      * @param <T>
      * @return
      */
-    public <T> T getProxy(Class<T> clazz){
+    public <T> T getProxy(Class<T> clazz) {
         return (T) objectCache.computeIfAbsent(clazz, clz ->
-                        Proxy.newProxyInstance(clz.getClassLoader(),new Class[]{clz},new ClientInvocationHandler(clz))
-                );
+                Proxy.newProxyInstance(clz.getClassLoader(), new Class[]{clz}, new ClientInvocationHandler(clz))
+        );
     }
 
 
-    private class ClientInvocationHandler implements InvocationHandler{
+    private class ClientInvocationHandler implements InvocationHandler {
 
         private Class<?> clazz;
 
-        public ClientInvocationHandler(Class<?> clazz){
+        public ClientInvocationHandler(Class<?> clazz) {
             this.clazz = clazz;
         }
 
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (method.getName().equals("toString")){
+            if (method.getName().equals("toString")) {
                 return proxy.toString();
             }
 
-            if (method.getName().equals("hashCode")){
+            if (method.getName().equals("hashCode")) {
                 return 0;
             }
             // 1.获得服务信息
             String serviceName = clazz.getName();
-            List<Service> services = serverDiscovery.findServiceList(serviceName);
-            if (services == null || services.size() == 0){
-                throw new RpcException("No provider available!");
-            }
+            List<Service> services = getServiceList(serviceName);
             Service service = loadBalance.chooseOne(services);
-
             // 2.构造request对象
             RpcRequest request = new RpcRequest();
             request.setServiceName(service.getName());
@@ -91,12 +88,33 @@ public class ClientProxyFactory {
             RpcResponse response = messageProtocol.unmarshallingResponse(respData);
 
             // 6.结果处理
-            if (response.getException() != null){
+            if (response.getException() != null) {
                 return response.getException();
             }
 
             return response.getReturnValue();
         }
+    }
+
+    /**
+     * 根据服务名获取可用的服务地址列表
+     * @param serviceName
+     * @return
+     */
+    private List<Service> getServiceList(String serviceName) {
+        List<Service> services;
+        synchronized (serviceName){
+            if (ServerDiscoveryCache.isEmpty(serviceName)) {
+                services = serverDiscovery.findServiceList(serviceName);
+                if (services == null || services.size() == 0) {
+                    throw new RpcException("No provider available!");
+                }
+                ServerDiscoveryCache.put(serviceName, services);
+            } else {
+                services = ServerDiscoveryCache.get(serviceName);
+            }
+        }
+        return services;
     }
 
 
