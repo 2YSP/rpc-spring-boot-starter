@@ -17,6 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <protostuff.version>1.0.7</protostuff.version>
+        <kryo.version>4.0.2</kryo.version>
     </properties>
 
     <dependencies>
@@ -66,6 +67,12 @@
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-runtime</artifactId>
             <version>${protostuff.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>${kryo.version}</version>
         </dependency>
     </dependencies>
 
