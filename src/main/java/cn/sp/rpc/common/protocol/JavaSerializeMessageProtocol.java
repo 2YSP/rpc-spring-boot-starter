@@ -1,6 +1,9 @@
 package cn.sp.rpc.common.protocol;
 
 
+import cn.sp.rpc.annotation.MessageProtocolAno;
+import cn.sp.rpc.common.constants.RpcConstant;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,13 +12,13 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.annotation.processing.ProcessingEnvironment;
 
 /**
  * Java序列化消息协议
  * @author 2YSP
  * @date 2020/7/25 21:07
  */
+@MessageProtocolAno(RpcConstant.PROTOCOL_JAVA)
 public class JavaSerializeMessageProtocol implements MessageProtocol {
 
     private byte[] serialize(Object o) throws IOException {

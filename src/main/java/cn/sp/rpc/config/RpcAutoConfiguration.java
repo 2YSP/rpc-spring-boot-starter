@@ -1,14 +1,12 @@
 package cn.sp.rpc.config;
 
 import cn.sp.rpc.annotation.LoadBalanceAno;
-import cn.sp.rpc.client.balance.*;
+import cn.sp.rpc.annotation.MessageProtocolAno;
+import cn.sp.rpc.client.balance.LoadBalance;
 import cn.sp.rpc.client.discovery.ZookeeperServerDiscovery;
 import cn.sp.rpc.client.net.ClientProxyFactory;
 import cn.sp.rpc.client.net.NettyNetClient;
-import cn.sp.rpc.common.constants.RpcConstant;
-import cn.sp.rpc.common.protocol.JavaSerializeMessageProtocol;
 import cn.sp.rpc.common.protocol.MessageProtocol;
-import cn.sp.rpc.common.protocol.ProtoBufMessageProtocol;
 import cn.sp.rpc.exception.RpcException;
 import cn.sp.rpc.properties.RpcConfig;
 import cn.sp.rpc.server.NettyRpcServer;
@@ -30,6 +28,7 @@ import java.util.ServiceLoader;
 
 /**
  * 注入需要的bean
+ *
  * @author 2YSP
  * @date 2020/7/25 19:43
  */
@@ -39,12 +38,12 @@ public class RpcAutoConfiguration {
 
 
     @Bean
-    public RpcConfig rpcConfig(){
+    public RpcConfig rpcConfig() {
         return new RpcConfig();
     }
 
     @Bean
-    public ServerRegister serverRegister(@Autowired RpcConfig rpcConfig){
+    public ServerRegister serverRegister(@Autowired RpcConfig rpcConfig) {
         return new ZookeeperServerRegister(
                 rpcConfig.getRegisterAddress(),
                 rpcConfig.getServerPort(),
@@ -54,35 +53,25 @@ public class RpcAutoConfiguration {
 
     @Bean
     public RequestHandler requestHandler(@Autowired ServerRegister serverRegister,
-                                         @Autowired RpcConfig rpcConfig){
-        MessageProtocol messageProtocol = null;
-        if (rpcConfig.getProtocol().equals(RpcConstant.PROTOCOL_JAVA)){
-            messageProtocol = new JavaSerializeMessageProtocol();
-        } else if (rpcConfig.getProtocol().equals(RpcConstant.PROTOCOL_PROTOBUF)){
-            messageProtocol = new ProtoBufMessageProtocol();
-        } else{
-            throw new RpcException("un support message protocol!");
-        }
-        return new RequestHandler(messageProtocol,serverRegister);
+                                         @Autowired RpcConfig rpcConfig) {
+        return new RequestHandler(getMessageProtocol(rpcConfig.getProtocol()), serverRegister);
     }
 
     @Bean
     public RpcServer rpcServer(@Autowired RequestHandler requestHandler,
-                               @Autowired RpcConfig rpcConfig){
-        return new NettyRpcServer(rpcConfig.getServerPort(),rpcConfig.getProtocol(),requestHandler);
+                               @Autowired RpcConfig rpcConfig) {
+        return new NettyRpcServer(rpcConfig.getServerPort(), rpcConfig.getProtocol(), requestHandler);
     }
 
 
     @Bean
-    public ClientProxyFactory proxyFactory(@Autowired RpcConfig rpcConfig){
+    public ClientProxyFactory proxyFactory(@Autowired RpcConfig rpcConfig) {
         ClientProxyFactory clientProxyFactory = new ClientProxyFactory();
         // 设置服务发现着
         clientProxyFactory.setServerDiscovery(new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress()));
 
         // 设置支持的协议
-        Map<String, MessageProtocol> supportMessageProtocols = new HashMap<>();
-        supportMessageProtocols.put(RpcConstant.PROTOCOL_JAVA,new JavaSerializeMessageProtocol());
-        supportMessageProtocols.put(RpcConstant.PROTOCOL_PROTOBUF,new ProtoBufMessageProtocol());
+        Map<String, MessageProtocol> supportMessageProtocols = buildSupportMessageProtocols();
         clientProxyFactory.setSupportMessageProtocols(supportMessageProtocols);
         // 设置负载均衡算法
         LoadBalance loadBalance = getLoadBalance(rpcConfig.getLoadBalance());
@@ -93,19 +82,48 @@ public class RpcAutoConfiguration {
         return clientProxyFactory;
     }
 
+    private MessageProtocol getMessageProtocol(String name) {
+        ServiceLoader<MessageProtocol> loader = ServiceLoader.load(MessageProtocol.class);
+        Iterator<MessageProtocol> iterator = loader.iterator();
+        while (iterator.hasNext()) {
+            MessageProtocol messageProtocol = iterator.next();
+            MessageProtocolAno ano = messageProtocol.getClass().getAnnotation(MessageProtocolAno.class);
+            Assert.notNull(ano, "message protocol name can not be empty!");
+            if (name.equals(ano.value())) {
+                return messageProtocol;
+            }
+        }
+        throw new RpcException("invalid message protocol config!");
+    }
+
+
+    private Map<String, MessageProtocol> buildSupportMessageProtocols() {
+        Map<String, MessageProtocol> supportMessageProtocols = new HashMap<>();
+        ServiceLoader<MessageProtocol> loader = ServiceLoader.load(MessageProtocol.class);
+        Iterator<MessageProtocol> iterator = loader.iterator();
+        while (iterator.hasNext()) {
+            MessageProtocol messageProtocol = iterator.next();
+            MessageProtocolAno ano = messageProtocol.getClass().getAnnotation(MessageProtocolAno.class);
+            Assert.notNull(ano, "message protocol name can not be empty!");
+            supportMessageProtocols.put(ano.value(), messageProtocol);
+        }
+        return supportMessageProtocols;
+    }
+
     /**
      * 使用spi匹配符合配置的负载均衡算法
+     *
      * @param name
      * @return
      */
-    private LoadBalance getLoadBalance(String name){
+    private LoadBalance getLoadBalance(String name) {
         ServiceLoader<LoadBalance> loader = ServiceLoader.load(LoadBalance.class);
         Iterator<LoadBalance> iterator = loader.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             LoadBalance loadBalance = iterator.next();
             LoadBalanceAno ano = loadBalance.getClass().getAnnotation(LoadBalanceAno.class);
-            Assert.notNull(ano,"load balance name can not be empty!");
-            if (name.equals(ano.value())){
+            Assert.notNull(ano, "load balance name can not be empty!");
+            if (name.equals(ano.value())) {
                 return loadBalance;
             }
         }
@@ -115,10 +133,9 @@ public class RpcAutoConfiguration {
     @Bean
     public DefaultRpcProcessor rpcProcessor(@Autowired ClientProxyFactory clientProxyFactory,
                                             @Autowired ServerRegister serverRegister,
-                                            @Autowired RpcServer rpcServer){
-        return new DefaultRpcProcessor(clientProxyFactory,serverRegister,rpcServer);
+                                            @Autowired RpcServer rpcServer) {
+        return new DefaultRpcProcessor(clientProxyFactory, serverRegister, rpcServer);
     }
-
 
 
 }

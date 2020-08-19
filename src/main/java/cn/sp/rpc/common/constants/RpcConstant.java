@@ -29,6 +29,10 @@ public class RpcConstant {
      */
     public static final String PROTOCOL_PROTOBUF = "protobuf";
     /**
+     * kryo序列化协议
+     */
+    public static final String PROTOCOL_KRYO = "kryo";
+    /**
      * 随机
      */
     public static final String BALANCE_RANDOM = "random";

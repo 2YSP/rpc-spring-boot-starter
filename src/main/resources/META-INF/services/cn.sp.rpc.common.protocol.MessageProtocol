@@ -1,0 +1,3 @@
+cn.sp.rpc.common.protocol.JavaSerializeMessageProtocol
+cn.sp.rpc.common.protocol.ProtoBufMessageProtocol
+cn.sp.rpc.common.protocol.KryoMessageProtocol

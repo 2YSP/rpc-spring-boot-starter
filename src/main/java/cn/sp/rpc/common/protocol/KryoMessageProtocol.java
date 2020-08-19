@@ -1,5 +1,7 @@
 package cn.sp.rpc.common.protocol;
 
+import cn.sp.rpc.annotation.MessageProtocolAno;
+import cn.sp.rpc.common.constants.RpcConstant;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -10,10 +12,12 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * Kryo实现序列化和反序列化
+ * 注意：kryo不是线程安全的
  */
+@MessageProtocolAno(RpcConstant.PROTOCOL_KRYO)
 public class KryoMessageProtocol implements MessageProtocol {
 
-    private static ThreadLocal<Kryo> kryoLocal = new ThreadLocal<Kryo>() {
+    private static final ThreadLocal<Kryo> kryoLocal = new ThreadLocal<Kryo>() {
         @Override
         protected Kryo initialValue() {
             Kryo kryo = new Kryo();

@@ -1,5 +1,7 @@
 package cn.sp.rpc.common.protocol;
 
+import cn.sp.rpc.annotation.MessageProtocolAno;
+import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.util.SerializingUtil;
 
 /**
@@ -7,6 +9,7 @@ import cn.sp.rpc.util.SerializingUtil;
  * @author 2YSP
  * @date 2020/8/5 21:22
  */
+@MessageProtocolAno(RpcConstant.PROTOCOL_PROTOBUF)
 public class ProtoBufMessageProtocol implements MessageProtocol{
 
     @Override
