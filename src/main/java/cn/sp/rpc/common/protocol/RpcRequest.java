@@ -9,6 +9,8 @@ import java.util.Map;
  * @date 2020/7/25 21:02
  */
 public class RpcRequest implements Serializable {
+
+    private String requestId;
     /**
      * 请求的服务名
      */
@@ -23,6 +25,14 @@ public class RpcRequest implements Serializable {
     private Class<?>[] parameterTypes;
 
     private Object[] parameters;
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
     public String getServiceName() {
         return serviceName;

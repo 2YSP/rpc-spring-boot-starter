@@ -1,5 +1,7 @@
 package cn.sp.rpc.common.model;
 
+import java.util.Objects;
+
 /**
  * @author 2YSP
  * @date 2020/7/25 19:46
@@ -63,5 +65,21 @@ public class Service {
                 ", address='" + address + '\'' +
                 ", weight=" + weight +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Service service = (Service) o;
+        return Objects.equals(name, service.name) &&
+                Objects.equals(protocol, service.protocol) &&
+                Objects.equals(address, service.address) &&
+                Objects.equals(weight, service.weight);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, protocol, address, weight);
     }
 }

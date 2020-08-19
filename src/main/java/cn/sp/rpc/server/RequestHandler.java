@@ -53,6 +53,7 @@ public class RequestHandler {
             }
         }
         // 编组响应消息
+        response.setRequestId(req.getRequestId());
         return this.protocol.marshallingResponse(response);
     }
 

@@ -15,6 +15,7 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 客户端代理工厂：用于创建远程服务代理类
@@ -73,19 +74,21 @@ public class ClientProxyFactory {
             Service service = loadBalance.chooseOne(services);
             // 2.构造request对象
             RpcRequest request = new RpcRequest();
+            request.setRequestId(UUID.randomUUID().toString());
             request.setServiceName(service.getName());
             request.setMethod(method.getName());
             request.setParameters(args);
             request.setParameterTypes(method.getParameterTypes());
             // 3.协议层编组
             MessageProtocol messageProtocol = supportMessageProtocols.get(service.getProtocol());
+            RpcResponse response = netClient.sendRequest(request, service, messageProtocol);
             // 编组请求
-            byte[] reqData = messageProtocol.marshallingRequest(request);
-            // 4. 调用网络层发送请求
-            byte[] respData = netClient.sendRequest(reqData, service);
-
-            // 5. 解组响应消息
-            RpcResponse response = messageProtocol.unmarshallingResponse(respData);
+//            byte[] reqData = messageProtocol.marshallingRequest(request);
+//            // 4. 调用网络层发送请求
+//            byte[] respData = netClient.sendRequest(reqData, service);
+//
+//            // 5. 解组响应消息
+//            RpcResponse response = messageProtocol.unmarshallingResponse(respData);
 
             // 6.结果处理
             if (response.getException() != null) {

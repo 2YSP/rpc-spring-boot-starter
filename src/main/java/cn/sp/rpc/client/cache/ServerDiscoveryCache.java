@@ -12,7 +12,9 @@ import java.util.stream.Collectors;
  * 服务发现本地缓存
  */
 public class ServerDiscoveryCache {
-
+    /**
+     * key: serviceName
+     */
     private static final Map<String, List<Service>> SERVER_MAP = new ConcurrentHashMap<>();
     /**
      * 客户端注入的远程服务service class

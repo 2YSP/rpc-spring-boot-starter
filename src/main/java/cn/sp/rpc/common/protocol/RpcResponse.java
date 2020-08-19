@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public class RpcResponse implements Serializable {
 
+    private String requestId;
+
     private Map<String, String> headers = new HashMap<>();
 
     private Object returnValue;
@@ -19,6 +21,14 @@ public class RpcResponse implements Serializable {
     private RpcStatusEnum rpcStatus;
 
     public RpcResponse() {
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 
     public RpcResponse(RpcStatusEnum rpcStatus) {
