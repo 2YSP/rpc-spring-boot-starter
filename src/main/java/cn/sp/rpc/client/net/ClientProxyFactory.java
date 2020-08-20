@@ -89,7 +89,9 @@ public class ClientProxyFactory {
 //
 //            // 5. 解组响应消息
 //            RpcResponse response = messageProtocol.unmarshallingResponse(respData);
-
+            if (response == null){
+                throw new RpcException("the response is null");
+            }
             // 6.结果处理
             if (response.getException() != null) {
                 return response.getException();

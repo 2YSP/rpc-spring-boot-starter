@@ -87,7 +87,7 @@ public class NettyNetClient implements NetClient {
             String[] addrInfo = address.split(":");
             final String serverAddress = addrInfo[0];
             final String serverPort = addrInfo[1];
-            final SendHandlerV2 handler = new SendHandlerV2(messageProtocol);
+            final SendHandlerV2 handler = new SendHandlerV2(messageProtocol, address);
             threadPool.submit(() -> {
                         // 配置客户端
                         Bootstrap b = new Bootstrap();

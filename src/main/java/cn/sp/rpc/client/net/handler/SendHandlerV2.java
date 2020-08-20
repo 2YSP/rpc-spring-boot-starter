@@ -1,9 +1,10 @@
 package cn.sp.rpc.client.net.handler;
 
+import cn.sp.rpc.client.net.NettyNetClient;
 import cn.sp.rpc.client.net.RpcFuture;
-import cn.sp.rpc.common.protocol.MessageProtocol;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
+import cn.sp.rpc.common.protocol.MessageProtocol;
 import cn.sp.rpc.exception.RpcException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -27,18 +28,6 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(SendHandlerV2.class);
 
-    private volatile Channel channel;
-
-    private static Map<String, RpcFuture<RpcResponse>> requestMap = new ConcurrentHashMap<>();
-
-    private MessageProtocol messageProtocol;
-
-    private CountDownLatch latch = new CountDownLatch(1);
-
-    public SendHandlerV2(MessageProtocol messageProtocol) {
-        this.messageProtocol = messageProtocol;
-    }
-
     /**
      * 等待通道建立最大时间
      */
@@ -46,9 +35,22 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
     /**
      * 等待响应最大时间
      */
-    static final int RESPONSE_WAIT_TIME = 5;
+    static final int RESPONSE_WAIT_TIME = 8;
 
+    private volatile Channel channel;
 
+    private String remoteAddress;
+
+    private static Map<String, RpcFuture<RpcResponse>> requestMap = new ConcurrentHashMap<>();
+
+    private MessageProtocol messageProtocol;
+
+    private CountDownLatch latch = new CountDownLatch(1);
+
+    public SendHandlerV2(MessageProtocol messageProtocol,String remoteAddress) {
+        this.messageProtocol = messageProtocol;
+        this.remoteAddress = remoteAddress;
+    }
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
@@ -84,6 +86,19 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        logger.error("channel inactive with remoteAddress:[{}]",remoteAddress);
+        NettyNetClient.connectedServerNodes.remove(remoteAddress);
+
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        super.userEventTriggered(ctx, evt);
     }
 
     public RpcResponse sendRequest(RpcRequest request) {
