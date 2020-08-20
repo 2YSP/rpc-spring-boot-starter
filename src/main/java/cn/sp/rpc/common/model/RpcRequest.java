@@ -1,4 +1,4 @@
-package cn.sp.rpc.common.protocol;
+package cn.sp.rpc.common.model;
 
 import java.io.Serializable;
 import java.util.HashMap;

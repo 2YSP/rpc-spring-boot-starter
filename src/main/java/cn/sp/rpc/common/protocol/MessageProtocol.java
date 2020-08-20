@@ -1,5 +1,8 @@
 package cn.sp.rpc.common.protocol;
 
+import cn.sp.rpc.common.model.RpcRequest;
+import cn.sp.rpc.common.model.RpcResponse;
+
 /**
  *消息协议:定义编组请求、解组请求、编组响应、解组响应的规范
  * @author 2YSP

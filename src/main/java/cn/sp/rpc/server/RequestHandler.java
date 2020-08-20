@@ -1,9 +1,9 @@
 package cn.sp.rpc.server;
 
 import cn.sp.rpc.common.protocol.MessageProtocol;
-import cn.sp.rpc.common.protocol.RpcRequest;
-import cn.sp.rpc.common.protocol.RpcResponse;
-import cn.sp.rpc.common.protocol.RpcStatusEnum;
+import cn.sp.rpc.common.model.RpcRequest;
+import cn.sp.rpc.common.model.RpcResponse;
+import cn.sp.rpc.common.constants.RpcStatusEnum;
 import cn.sp.rpc.server.register.ServerRegister;
 import cn.sp.rpc.server.register.ServiceObject;
 

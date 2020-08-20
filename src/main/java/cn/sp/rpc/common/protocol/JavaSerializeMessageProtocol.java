@@ -3,6 +3,8 @@ package cn.sp.rpc.common.protocol;
 
 import cn.sp.rpc.annotation.MessageProtocolAno;
 import cn.sp.rpc.common.constants.RpcConstant;
+import cn.sp.rpc.common.model.RpcRequest;
+import cn.sp.rpc.common.model.RpcResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -5,8 +5,8 @@ import cn.sp.rpc.client.net.handler.SendHandler;
 import cn.sp.rpc.client.net.handler.SendHandlerV2;
 import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.protocol.MessageProtocol;
-import cn.sp.rpc.common.protocol.RpcRequest;
-import cn.sp.rpc.common.protocol.RpcResponse;
+import cn.sp.rpc.common.model.RpcRequest;
+import cn.sp.rpc.common.model.RpcResponse;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -39,7 +39,7 @@ public class NettyNetClient implements NetClient {
      * 已连接的服务缓存
      * key: 服务地址，格式：ip:port
      */
-    private static Map<String, SendHandlerV2> connectedServerNodes = new ConcurrentHashMap<>();
+    public static Map<String, SendHandlerV2> connectedServerNodes = new ConcurrentHashMap<>();
 
     @Override
     public byte[] sendRequest(byte[] data, Service service) throws InterruptedException {
@@ -107,7 +107,6 @@ public class NettyNetClient implements NetClient {
                         channelFuture.addListener(new ChannelFutureListener() {
                             @Override
                             public void operationComplete(ChannelFuture channelFuture) throws Exception {
-//                                SendHandlerV2 handler = channelFuture.channel().pipeline().get(SendHandlerV2.class);
                                 connectedServerNodes.put(address, handler);
                             }
                         });

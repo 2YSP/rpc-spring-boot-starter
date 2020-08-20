@@ -2,8 +2,8 @@ package cn.sp.rpc.client.net.handler;
 
 import cn.sp.rpc.client.net.RpcFuture;
 import cn.sp.rpc.common.protocol.MessageProtocol;
-import cn.sp.rpc.common.protocol.RpcRequest;
-import cn.sp.rpc.common.protocol.RpcResponse;
+import cn.sp.rpc.common.model.RpcRequest;
+import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.exception.RpcException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,20 +29,31 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
 
     private volatile Channel channel;
 
-    private static Map<String, RpcFuture<RpcResponse>> map = new ConcurrentHashMap<>();
+    private static Map<String, RpcFuture<RpcResponse>> requestMap = new ConcurrentHashMap<>();
 
     private MessageProtocol messageProtocol;
 
-    private volatile boolean flag;
+    private CountDownLatch latch = new CountDownLatch(1);
 
     public SendHandlerV2(MessageProtocol messageProtocol) {
         this.messageProtocol = messageProtocol;
     }
 
+    /**
+     * 等待通道建立最大时间
+     */
+    static final int CHANNEL_WAIT_TIME = 4;
+    /**
+     * 等待响应最大时间
+     */
+    static final int RESPONSE_WAIT_TIME = 5;
+
+
+
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         this.channel = ctx.channel();
-        flag = true;
+        latch.countDown();
     }
 
     @Override
@@ -58,7 +70,7 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
         // 手动回收
         ReferenceCountUtil.release(byteBuf);
         RpcResponse response = messageProtocol.unmarshallingResponse(resp);
-        RpcFuture<RpcResponse> future = map.get(response.getRequestId());
+        RpcFuture<RpcResponse> future = requestMap.get(response.getRequestId());
         future.setResponse(response);
     }
 
@@ -77,21 +89,22 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
     public RpcResponse sendRequest(RpcRequest request) {
         RpcResponse response;
         RpcFuture<RpcResponse> future = new RpcFuture<>();
-        map.put(request.getRequestId(), future);
+        requestMap.put(request.getRequestId(), future);
         try {
             byte[] data = messageProtocol.marshallingRequest(request);
             ByteBuf reqBuf = Unpooled.buffer(data.length);
             reqBuf.writeBytes(data);
-            while (!flag){
-                Thread.sleep(10);
+            if (latch.await(CHANNEL_WAIT_TIME,TimeUnit.SECONDS)){
+                channel.writeAndFlush(reqBuf);
+                // 等待响应
+                response = future.get(RESPONSE_WAIT_TIME, TimeUnit.SECONDS);
+            }else {
+                throw new RpcException("establish channel time out");
             }
-            channel.writeAndFlush(reqBuf);
-            // 等待响应
-            response = future.get(8, TimeUnit.SECONDS);
         } catch (Exception e) {
             throw new RpcException(e.getMessage());
         } finally {
-            map.remove(request.getRequestId());
+            requestMap.remove(request.getRequestId());
         }
         return response;
     }

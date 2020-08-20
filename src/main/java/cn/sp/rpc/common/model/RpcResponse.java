@@ -1,4 +1,6 @@
-package cn.sp.rpc.common.protocol;
+package cn.sp.rpc.common.model;
+
+import cn.sp.rpc.common.constants.RpcStatusEnum;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package cn.sp.rpc.common.protocol;
+package cn.sp.rpc.common.constants;
 
 /**
  * @author 2YSP

@@ -5,8 +5,8 @@ import cn.sp.rpc.client.cache.ServerDiscoveryCache;
 import cn.sp.rpc.client.discovery.ServerDiscovery;
 import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.protocol.MessageProtocol;
-import cn.sp.rpc.common.protocol.RpcRequest;
-import cn.sp.rpc.common.protocol.RpcResponse;
+import cn.sp.rpc.common.model.RpcRequest;
+import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.exception.RpcException;
 
 import java.lang.reflect.InvocationHandler;
