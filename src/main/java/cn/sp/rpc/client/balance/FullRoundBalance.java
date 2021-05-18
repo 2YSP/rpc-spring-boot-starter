@@ -3,10 +3,12 @@ package cn.sp.rpc.client.balance;
 import cn.sp.rpc.annotation.LoadBalanceAno;
 import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.Service;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 轮询算法
@@ -16,7 +18,7 @@ public class FullRoundBalance implements LoadBalance {
 
     private static Logger logger = LoggerFactory.getLogger(FullRoundBalance.class);
 
-    private volatile int index;
+    private int index;
 
     @Override
     public synchronized Service chooseOne(List<Service> services) {
