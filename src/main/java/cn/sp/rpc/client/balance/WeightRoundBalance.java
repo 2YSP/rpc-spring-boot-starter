@@ -12,7 +12,7 @@ import java.util.List;
 @LoadBalanceAno(RpcConstant.BALANCE_WEIGHT_ROUND)
 public class WeightRoundBalance implements LoadBalance{
 
-    private volatile static int index;
+    private static int index;
 
     @Override
     public synchronized Service chooseOne(List<Service> services) {

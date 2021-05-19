@@ -3,12 +3,10 @@ package cn.sp.rpc.client.balance;
 import cn.sp.rpc.annotation.LoadBalanceAno;
 import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.Service;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 轮询算法
