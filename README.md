@@ -77,3 +77,5 @@ public class UserServiceImpl implements UserService{
 
 用法 demo
 https://github.com/2YSP/rpc-example
+
+文章：https://www.cnblogs.com/2YSP/p/13545217.html
