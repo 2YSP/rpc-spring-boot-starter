@@ -82,6 +82,13 @@
             <version>29.0-jre</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>hessian</artifactId>
+            <version>3.3.8</version>
+        </dependency>
+
     </dependencies>
 
 
