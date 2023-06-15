@@ -1,9 +1,10 @@
-package cn.sp.rpc.common.protocol;
+package cn.sp.rpc.common.protocol.impl;
 
 import cn.sp.rpc.annotation.MessageProtocolAno;
 import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
+import cn.sp.rpc.common.protocol.MessageProtocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;

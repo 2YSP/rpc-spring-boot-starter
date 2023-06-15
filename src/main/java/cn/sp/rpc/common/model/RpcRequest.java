@@ -20,9 +20,11 @@ public class RpcRequest implements Serializable {
      */
     private String method;
 
-    private Map<String,String> headers = new HashMap<>();
+    private Map<String, String> headers = new HashMap<>();
 
     private Class<?>[] parameterTypes;
+
+    private String[] parameterTypeNames;
 
     private Object[] parameters;
 
@@ -72,5 +74,14 @@ public class RpcRequest implements Serializable {
 
     public void setParameters(Object[] parameters) {
         this.parameters = parameters;
+    }
+
+
+    public String[] getParameterTypeNames() {
+        return parameterTypeNames;
+    }
+
+    public void setParameterTypeNames(String[] parameterTypeNames) {
+        this.parameterTypeNames = parameterTypeNames;
     }
 }
