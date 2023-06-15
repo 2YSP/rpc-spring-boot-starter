@@ -1,8 +1,8 @@
-package cn.sp.rpc.common.protocol.impl;
+package cn.sp.rpc.spi.protocol.impl;
 
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
-import cn.sp.rpc.common.protocol.MessageProtocol;
+import cn.sp.rpc.spi.protocol.MessageProtocol;
 import cn.sp.rpc.util.GenericObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.alipay.hessian.generic.io.GenericSerializerFactory;

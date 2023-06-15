@@ -4,7 +4,7 @@ package cn.sp.rpc.client.net;
 import cn.sp.rpc.client.net.handler.SendHandler;
 import cn.sp.rpc.client.net.handler.SendHandlerV2;
 import cn.sp.rpc.common.model.Service;
-import cn.sp.rpc.common.protocol.MessageProtocol;
+import cn.sp.rpc.spi.protocol.MessageProtocol;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;

@@ -1,4 +1,4 @@
-package cn.sp.rpc.common.protocol;
+package cn.sp.rpc.spi.protocol;
 
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;

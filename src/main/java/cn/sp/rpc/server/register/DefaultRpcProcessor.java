@@ -33,11 +33,15 @@ public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshed
 
     private RpcServer rpcServer;
 
+    private ServerDiscoveryManager serverDiscoveryManager;
 
-    public DefaultRpcProcessor(ClientProxyFactory clientProxyFactory, ServerRegister serverRegister, RpcServer rpcServer) {
+
+    public DefaultRpcProcessor(ClientProxyFactory clientProxyFactory, ServerRegister serverRegister,
+                               RpcServer rpcServer, ServerDiscoveryManager serverDiscoveryManager) {
         this.clientProxyFactory = clientProxyFactory;
         this.serverRegister = serverRegister;
         this.rpcServer = rpcServer;
+        this.serverDiscoveryManager = serverDiscoveryManager;
     }
 
     @Override
@@ -80,7 +84,6 @@ public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshed
             }
         }
         // 注册子节点监听
-        ServerDiscoveryManager serverDiscoveryManager = clientProxyFactory.getServerDiscoveryManager();
         serverDiscoveryManager.registerChangeListener();
         logger.info("register service change listener successfully");
     }

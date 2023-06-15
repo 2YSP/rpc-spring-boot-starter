@@ -1,7 +1,7 @@
 package cn.sp.rpc.client.manager;
 
 import cn.sp.rpc.annotation.MessageProtocolAno;
-import cn.sp.rpc.common.protocol.MessageProtocol;
+import cn.sp.rpc.spi.protocol.MessageProtocol;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.ServiceLoader;
  */
 public class MessageProtocolsManager {
 
-    private static Map<String, MessageProtocol> SUPPORT_MESSAGE_PROTOCOL_MAP = new HashMap<>();
+    private static final Map<String, MessageProtocol> SUPPORT_MESSAGE_PROTOCOL_MAP = new HashMap<>();
 
     static {
         ServiceLoader<MessageProtocol> loader = ServiceLoader.load(MessageProtocol.class);

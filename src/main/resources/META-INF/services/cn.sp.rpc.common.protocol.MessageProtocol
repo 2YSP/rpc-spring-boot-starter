@@ -1,4 +1,0 @@
-cn.sp.rpc.common.protocol.impl.JavaSerializeMessageProtocol
-cn.sp.rpc.common.protocol.impl.ProtoBufMessageProtocol
-cn.sp.rpc.common.protocol.impl.KryoMessageProtocol
-cn.sp.rpc.common.protocol.impl.HessianMessageProtocol

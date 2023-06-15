@@ -1,4 +1,4 @@
-package cn.sp.rpc.client.balance;
+package cn.sp.rpc.spi.balance;
 
 import cn.sp.rpc.common.model.Service;
 

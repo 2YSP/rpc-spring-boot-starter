@@ -1,8 +1,9 @@
-package cn.sp.rpc.client.balance;
+package cn.sp.rpc.spi.balance.impl;
 
 import cn.sp.rpc.annotation.LoadBalanceAno;
 import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.Service;
+import cn.sp.rpc.spi.balance.LoadBalance;
 
 import java.util.ArrayList;
 import java.util.HashMap;

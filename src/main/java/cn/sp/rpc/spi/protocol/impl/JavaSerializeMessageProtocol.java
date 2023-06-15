@@ -1,20 +1,17 @@
-package cn.sp.rpc.common.protocol.impl;
+package cn.sp.rpc.spi.protocol.impl;
 
 
 import cn.sp.rpc.annotation.MessageProtocolAno;
 import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
-import cn.sp.rpc.common.protocol.MessageProtocol;
+import cn.sp.rpc.spi.protocol.MessageProtocol;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Java序列化消息协议

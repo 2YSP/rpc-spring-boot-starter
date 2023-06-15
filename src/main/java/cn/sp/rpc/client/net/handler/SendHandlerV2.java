@@ -4,7 +4,7 @@ import cn.sp.rpc.client.net.NettyNetClient;
 import cn.sp.rpc.client.net.RpcFuture;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
-import cn.sp.rpc.common.protocol.MessageProtocol;
+import cn.sp.rpc.spi.protocol.MessageProtocol;
 import cn.sp.rpc.exception.RpcException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
