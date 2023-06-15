@@ -22,6 +22,7 @@ public class RpcRequest implements Serializable {
 
     private Map<String, String> headers = new HashMap<>();
 
+    @Deprecated
     private Class<?>[] parameterTypes;
 
     private String[] parameterTypeNames;

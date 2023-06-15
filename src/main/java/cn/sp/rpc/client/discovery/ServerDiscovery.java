@@ -12,5 +12,15 @@ import java.util.List;
  */
 public interface ServerDiscovery {
 
+    /**
+     * 根据服务名查找服务列表
+     * @param name
+     * @return
+     */
     List<Service> findServiceList(String name);
+
+    /**
+     * 注册服务监听
+     */
+    void registerChangeListener();
 }

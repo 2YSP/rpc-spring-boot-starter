@@ -3,11 +3,14 @@ package cn.sp.rpc.client.net;
 import cn.sp.rpc.client.balance.LoadBalance;
 import cn.sp.rpc.client.cache.ServerDiscoveryCache;
 import cn.sp.rpc.client.discovery.ServerDiscovery;
+import cn.sp.rpc.client.manager.MessageProtocolsManager;
+import cn.sp.rpc.client.manager.ServerDiscoveryManager;
 import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.protocol.MessageProtocol;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.exception.RpcException;
+import cn.sp.rpc.util.ReflectUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -26,11 +29,9 @@ import java.util.UUID;
  */
 public class ClientProxyFactory {
 
-    private ServerDiscovery serverDiscovery;
+    private ServerDiscoveryManager serverDiscoveryManager;
 
     private NetClient netClient;
-
-    private Map<String, MessageProtocol> supportMessageProtocols;
 
     private Map<Class<?>, Object> objectCache = new HashMap<>();
 
@@ -70,7 +71,7 @@ public class ClientProxyFactory {
             }
             // 1.获得服务信息
             String serviceName = clazz.getName();
-            List<Service> services = getServiceList(serviceName);
+            List<Service> services = serverDiscoveryManager.getServiceList(serviceName);
             Service service = loadBalance.chooseOne(services);
             // 2.构造request对象
             RpcRequest request = new RpcRequest();
@@ -78,18 +79,12 @@ public class ClientProxyFactory {
             request.setServiceName(service.getName());
             request.setMethod(method.getName());
             request.setParameters(args);
-            request.setParameterTypes(method.getParameterTypes());
+//            request.setParameterTypes(method.getParameterTypes());
+            request.setParameterTypeNames(ReflectUtils.getParameterTypeNames(method));
             // 3.协议层编组
-            MessageProtocol messageProtocol = supportMessageProtocols.get(service.getProtocol());
+            MessageProtocol messageProtocol = MessageProtocolsManager.get(service.getProtocol());
             RpcResponse response = netClient.sendRequest(request, service, messageProtocol);
-            // 编组请求
-//            byte[] reqData = messageProtocol.marshallingRequest(request);
-//            // 4. 调用网络层发送请求
-//            byte[] respData = netClient.sendRequest(reqData, service);
-//
-//            // 5. 解组响应消息
-//            RpcResponse response = messageProtocol.unmarshallingResponse(respData);
-            if (response == null){
+            if (response == null) {
                 throw new RpcException("the response is null");
             }
             // 6.结果处理
@@ -101,27 +96,6 @@ public class ClientProxyFactory {
         }
     }
 
-    /**
-     * 根据服务名获取可用的服务地址列表
-     * @param serviceName
-     * @return
-     */
-    private List<Service> getServiceList(String serviceName) {
-        List<Service> services;
-        synchronized (serviceName){
-            if (ServerDiscoveryCache.isEmpty(serviceName)) {
-                services = serverDiscovery.findServiceList(serviceName);
-                if (services == null || services.size() == 0) {
-                    throw new RpcException("No provider available!");
-                }
-                ServerDiscoveryCache.put(serviceName, services);
-            } else {
-                services = ServerDiscoveryCache.get(serviceName);
-            }
-        }
-        return services;
-    }
-
 
     public LoadBalance getLoadBalance() {
         return loadBalance;
@@ -129,14 +103,6 @@ public class ClientProxyFactory {
 
     public void setLoadBalance(LoadBalance loadBalance) {
         this.loadBalance = loadBalance;
-    }
-
-    public ServerDiscovery getServerDiscovery() {
-        return serverDiscovery;
-    }
-
-    public void setServerDiscovery(ServerDiscovery serverDiscovery) {
-        this.serverDiscovery = serverDiscovery;
     }
 
     public NetClient getNetClient() {
@@ -147,19 +113,19 @@ public class ClientProxyFactory {
         this.netClient = netClient;
     }
 
-    public Map<String, MessageProtocol> getSupportMessageProtocols() {
-        return supportMessageProtocols;
-    }
-
-    public void setSupportMessageProtocols(Map<String, MessageProtocol> supportMessageProtocols) {
-        this.supportMessageProtocols = supportMessageProtocols;
-    }
-
     public Map<Class<?>, Object> getObjectCache() {
         return objectCache;
     }
 
     public void setObjectCache(Map<Class<?>, Object> objectCache) {
         this.objectCache = objectCache;
+    }
+
+    public ServerDiscoveryManager getServerDiscoveryManager() {
+        return serverDiscoveryManager;
+    }
+
+    public void setServerDiscoveryManager(ServerDiscoveryManager serverDiscoveryManager) {
+        this.serverDiscoveryManager = serverDiscoveryManager;
     }
 }

@@ -1,5 +1,7 @@
-package cn.sp.rpc.client.discovery;
+package cn.sp.rpc.client.discovery.zk;
 
+import cn.sp.rpc.client.cache.ServerDiscoveryCache;
+import cn.sp.rpc.client.discovery.ServerDiscovery;
 import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.serializer.ZookeeperSerializer;
@@ -49,8 +51,12 @@ public class ZookeeperServerDiscovery implements ServerDiscovery {
         }).collect(Collectors.toList());
     }
 
-    public ZkClient getZkClient() {
-        return zkClient;
-    }
 
+    @Override
+    public void registerChangeListener() {
+        ServerDiscoveryCache.SERVICE_CLASS_NAMES.forEach(name -> {
+            String servicePath = RpcConstant.ZK_SERVICE_PATH + RpcConstant.PATH_DELIMITER + name + "/service";
+            zkClient.subscribeChildChanges(servicePath, new ZkChildListenerImpl());
+        });
+    }
 }

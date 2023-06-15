@@ -6,12 +6,13 @@ import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.common.constants.RpcStatusEnum;
 import cn.sp.rpc.server.register.ServerRegister;
 import cn.sp.rpc.server.register.ServiceObject;
+import cn.sp.rpc.util.ReflectUtils;
 
 import java.lang.reflect.Method;
 
 /**
- *
  * 请求处理者，提供解组请求、编组响应等操作
+ *
  * @author 2YSP
  * @date 2020/7/26 14:06
  */
@@ -37,17 +38,17 @@ public class RequestHandler {
 
         RpcResponse response = null;
 
-        if (so == null){
+        if (so == null) {
             response = new RpcResponse(RpcStatusEnum.NOT_FOUND);
 
-        }else {
+        } else {
             try {
                 // 3.反射调用对应的方法过程
-                Method method = so.getClazz().getMethod(req.getMethod(), req.getParameterTypes());
+                Method method = so.getClazz().getMethod(req.getMethod(), ReflectUtils.convertToParameterTypes(req.getParameterTypeNames()));
                 Object returnValue = method.invoke(so.getObj(), req.getParameters());
                 response = new RpcResponse(RpcStatusEnum.SUCCESS);
                 response.setReturnValue(returnValue);
-            }catch (Exception e){
+            } catch (Exception e) {
                 response = new RpcResponse(RpcStatusEnum.ERROR);
                 response.setException(e);
             }
