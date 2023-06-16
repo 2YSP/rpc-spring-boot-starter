@@ -12,19 +12,18 @@ public class DefaultGenericService implements GenericService {
 
     private MethodInvoker methodInvoker;
 
-    private Class interfaceClazz;
+    private String interfaceClassName;
+
+    public DefaultGenericService(MethodInvoker methodInvoker, String interfaceClassName) {
+        this.methodInvoker = methodInvoker;
+        this.interfaceClassName = interfaceClassName;
+    }
+
 
     @Override
     public Object $invoke(String methodName, String[] parameterTypeNames, Object[] args) {
-        return methodInvoker.$invoke(interfaceClazz, methodName, parameterTypeNames, args);
+        return methodInvoker.$invoke(interfaceClassName, methodName, parameterTypeNames, args);
     }
 
 
-    public void setMethodInvoker(MethodInvoker methodInvoker) {
-        this.methodInvoker = methodInvoker;
-    }
-
-    public void setInterfaceClazz(Class interfaceClazz) {
-        this.interfaceClazz = interfaceClazz;
-    }
 }

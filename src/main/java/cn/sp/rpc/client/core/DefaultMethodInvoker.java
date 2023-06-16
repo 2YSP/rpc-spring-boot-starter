@@ -33,9 +33,9 @@ public class DefaultMethodInvoker implements MethodInvoker {
     }
 
     @Override
-    public Object $invoke(Class interfaceClazz, String methodName, String[] parameterTypeNames, Object[] args) {
+    public Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args) {
         // 1.获得服务信息
-        String serviceName = interfaceClazz.getName();
+        String serviceName = interfaceClassName;
         List<Service> services = serverDiscoveryManager.getServiceList(serviceName);
         Service service = loadBalance.chooseOne(services);
         // 2.构造request对象

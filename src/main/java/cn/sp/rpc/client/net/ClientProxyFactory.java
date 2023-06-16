@@ -1,23 +1,13 @@
 package cn.sp.rpc.client.net;
 
 import cn.sp.rpc.client.core.MethodInvoker;
-import cn.sp.rpc.spi.balance.LoadBalance;
-import cn.sp.rpc.client.manager.MessageProtocolsManager;
-import cn.sp.rpc.client.manager.ServerDiscoveryManager;
-import cn.sp.rpc.common.model.Service;
-import cn.sp.rpc.spi.protocol.MessageProtocol;
-import cn.sp.rpc.common.model.RpcRequest;
-import cn.sp.rpc.common.model.RpcResponse;
-import cn.sp.rpc.exception.RpcException;
 import cn.sp.rpc.util.ReflectUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 客户端代理工厂：用于创建远程服务代理类
@@ -64,7 +54,7 @@ public class ClientProxyFactory {
             if (method.getName().equals("hashCode")) {
                 return 0;
             }
-            return methodInvoker.$invoke(clazz, method.getName(), ReflectUtils.getParameterTypeNames(method), args);
+            return methodInvoker.$invoke(clazz.getName(), method.getName(), ReflectUtils.getParameterTypeNames(method), args);
         }
     }
 

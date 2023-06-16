@@ -9,11 +9,11 @@ public interface MethodInvoker {
 
     /**
      *
-     * @param interfaceClazz
+     * @param interfaceClassName
      * @param methodName
      * @param parameterTypeNames
      * @param args
      * @return
      */
-    Object $invoke(Class interfaceClazz, String methodName, String[] parameterTypeNames, Object[] args);
+    Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args);
 }

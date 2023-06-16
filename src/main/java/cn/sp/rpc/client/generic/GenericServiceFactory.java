@@ -1,26 +1,34 @@
 package cn.sp.rpc.client.generic;
 
 import cn.sp.rpc.client.core.MethodInvoker;
+import cn.sp.rpc.util.SpringContextHolder;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: Ship
  * @Description:
  * @Date: Created in 2023/6/15
  */
-public class GenericServiceFactory {
+public final class GenericServiceFactory {
 
-    private static MethodInvoker methodInvoker;
+    /**
+     * 实例缓存，key:接口类名
+     */
+    private static final Map<String, GenericService> INSTANCE_MAP = new ConcurrentHashMap<>();
 
+    private GenericServiceFactory() {}
 
-
-    private GenericServiceFactory(){
-
-    }
-
-    public static GenericService getInstance(Class interfaceClazz){
-        DefaultGenericService genericService = new DefaultGenericService();
-        genericService.setInterfaceClazz(interfaceClazz);
-        genericService.setMethodInvoker(methodInvoker);
-        return genericService;
+    /**
+     * @param interfaceClassName
+     * @return
+     */
+    public static GenericService getInstance(String interfaceClassName) {
+        return INSTANCE_MAP.computeIfAbsent(interfaceClassName, clz -> {
+            MethodInvoker methodInvoker = SpringContextHolder.getBean(MethodInvoker.class);
+            DefaultGenericService genericService = new DefaultGenericService(methodInvoker, interfaceClassName);
+            return genericService;
+        });
     }
 }
