@@ -6,7 +6,7 @@ import cn.sp.rpc.client.net.NetClient;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.common.model.Service;
-import cn.sp.rpc.exception.RpcException;
+import cn.sp.rpc.common.exception.RpcException;
 import cn.sp.rpc.spi.balance.LoadBalance;
 import cn.sp.rpc.spi.protocol.MessageProtocol;
 

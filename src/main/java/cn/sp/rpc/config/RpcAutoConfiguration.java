@@ -4,21 +4,21 @@ import cn.sp.rpc.client.core.DefaultMethodInvoker;
 import cn.sp.rpc.client.core.MethodInvoker;
 import cn.sp.rpc.client.manager.LoadBalanceManager;
 import cn.sp.rpc.client.manager.MessageProtocolsManager;
-import cn.sp.rpc.client.net.NetClientFactory;
-import cn.sp.rpc.spi.balance.LoadBalance;
-import cn.sp.rpc.client.discovery.ServerDiscovery;
-import cn.sp.rpc.client.discovery.zk.ZookeeperServerDiscovery;
 import cn.sp.rpc.client.manager.ServerDiscoveryManager;
 import cn.sp.rpc.client.net.ClientProxyFactory;
-import cn.sp.rpc.spi.protocol.MessageProtocol;
-import cn.sp.rpc.exception.RpcException;
-import cn.sp.rpc.properties.RpcConfig;
+import cn.sp.rpc.client.net.NetClientFactory;
+import cn.sp.rpc.common.exception.RpcException;
+import cn.sp.rpc.config.properties.RpcConfig;
+import cn.sp.rpc.discovery.register.DefaultServerRegister;
+import cn.sp.rpc.discovery.ServerDiscovery;
+import cn.sp.rpc.discovery.ServerRegister;
+import cn.sp.rpc.discovery.zk.ZookeeperServerDiscovery;
 import cn.sp.rpc.server.NettyRpcServer;
 import cn.sp.rpc.server.RequestHandler;
 import cn.sp.rpc.server.RpcServer;
 import cn.sp.rpc.server.register.DefaultRpcProcessor;
-import cn.sp.rpc.server.register.ServerRegister;
-import cn.sp.rpc.server.register.ZookeeperServerRegister;
+import cn.sp.rpc.spi.balance.LoadBalance;
+import cn.sp.rpc.spi.protocol.MessageProtocol;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -39,14 +39,6 @@ public class RpcAutoConfiguration {
     @Resource
     private RpcConfig rpcConfig;
 
-    @Bean
-    public ServerRegister serverRegister() {
-        return new ZookeeperServerRegister(
-                rpcConfig.getRegisterAddress(),
-                rpcConfig.getServerPort(),
-                rpcConfig.getProtocol(),
-                rpcConfig.getWeight());
-    }
 
     @Bean
     public RequestHandler requestHandler(@Autowired ServerRegister serverRegister) {
@@ -66,6 +58,11 @@ public class RpcAutoConfiguration {
     public ServerDiscovery serverDiscovery() {
         ServerDiscovery serverDiscovery = new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress());
         return serverDiscovery;
+    }
+
+    @Bean
+    public ServerRegister serverRegister(@Autowired ServerDiscovery serverDiscovery) {
+        return new DefaultServerRegister(serverDiscovery, rpcConfig);
     }
 
 

@@ -1,4 +1,4 @@
-package cn.sp.rpc.client.discovery.zk;
+package cn.sp.rpc.discovery.zk;
 
 import cn.sp.rpc.client.cache.ServerDiscoveryCache;
 import org.I0Itec.zkclient.IZkChildListener;

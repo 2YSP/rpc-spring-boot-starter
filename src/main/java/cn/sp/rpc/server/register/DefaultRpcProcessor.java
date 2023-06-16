@@ -5,6 +5,8 @@ import cn.sp.rpc.annotation.Service;
 import cn.sp.rpc.client.cache.ServerDiscoveryCache;
 import cn.sp.rpc.client.manager.ServerDiscoveryManager;
 import cn.sp.rpc.client.net.ClientProxyFactory;
+import cn.sp.rpc.discovery.ServerRegister;
+import cn.sp.rpc.discovery.ServiceObject;
 import cn.sp.rpc.server.RpcServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

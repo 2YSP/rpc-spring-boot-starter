@@ -1,7 +1,7 @@
 package cn.sp.rpc.client.manager;
 
 import cn.sp.rpc.annotation.LoadBalanceAno;
-import cn.sp.rpc.exception.RpcException;
+import cn.sp.rpc.common.exception.RpcException;
 import cn.sp.rpc.spi.balance.LoadBalance;
 import org.springframework.util.Assert;
 

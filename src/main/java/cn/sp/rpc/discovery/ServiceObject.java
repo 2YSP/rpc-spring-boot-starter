@@ -1,4 +1,4 @@
-package cn.sp.rpc.server.register;
+package cn.sp.rpc.discovery;
 
 /**
  * 服务持有对象，保存具体的服务信息备用

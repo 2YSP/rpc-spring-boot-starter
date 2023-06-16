@@ -1,4 +1,4 @@
-package cn.sp.rpc.exception;
+package cn.sp.rpc.common.exception;
 
 /**
  * @author 2YSP

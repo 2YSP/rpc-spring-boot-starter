@@ -4,8 +4,8 @@ import cn.sp.rpc.spi.protocol.MessageProtocol;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.common.constants.RpcStatusEnum;
-import cn.sp.rpc.server.register.ServerRegister;
-import cn.sp.rpc.server.register.ServiceObject;
+import cn.sp.rpc.discovery.ServerRegister;
+import cn.sp.rpc.discovery.ServiceObject;
 import cn.sp.rpc.util.ReflectUtils;
 
 import java.lang.reflect.Method;

@@ -1,9 +1,9 @@
 package cn.sp.rpc.client.manager;
 
 import cn.sp.rpc.client.cache.ServerDiscoveryCache;
-import cn.sp.rpc.client.discovery.ServerDiscovery;
+import cn.sp.rpc.discovery.ServerDiscovery;
 import cn.sp.rpc.common.model.Service;
-import cn.sp.rpc.exception.RpcException;
+import cn.sp.rpc.common.exception.RpcException;
 
 import java.util.List;
 

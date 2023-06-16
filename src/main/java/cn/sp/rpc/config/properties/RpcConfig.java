@@ -1,4 +1,4 @@
-package cn.sp.rpc.properties;
+package cn.sp.rpc.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -13,6 +13,10 @@ public class RpcConfig {
      * 服务注册中心地址
      */
     private String registerAddress = "127.0.0.1:2181";
+    /**
+     * 注册中心类型
+     */
+    private String registerCenterType;
 
     /**
      * 服务暴露端口
@@ -30,6 +34,15 @@ public class RpcConfig {
      * 权重，默认为1
      */
     private Integer weight = 1;
+
+
+    public String getRegisterCenterType() {
+        return registerCenterType;
+    }
+
+    public void setRegisterCenterType(String registerCenterType) {
+        this.registerCenterType = registerCenterType;
+    }
 
     public Integer getWeight() {
         return weight;

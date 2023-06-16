@@ -1,4 +1,4 @@
-package cn.sp.rpc.server.register;
+package cn.sp.rpc.discovery;
 
 /**
  * 服务注册器，定义服务注册规范
@@ -7,6 +7,11 @@ package cn.sp.rpc.server.register;
  */
 public interface ServerRegister {
 
+    /**
+     * 注册
+     * @param so
+     * @throws Exception
+     */
     void register(ServiceObject so)throws Exception;
 
     ServiceObject getServiceObject(String name)throws Exception;
