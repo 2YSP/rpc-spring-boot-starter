@@ -43,10 +43,6 @@ public class NettyNetClient implements NetClient {
 
     @Override
     public byte[] sendRequest(byte[] data, Service service) throws InterruptedException {
-        String address = service.getAddress();
-        String[] addrInfo = address.split(":");
-        final String serverAddress = addrInfo[0];
-        final String serverPort = addrInfo[1];
         SendHandler sendHandler = new SendHandler(data);
         byte[] respData;
         // 配置客户端
@@ -63,7 +59,7 @@ public class NettyNetClient implements NetClient {
                         }
                     });
             // 启用客户端连接
-            b.connect(serverAddress, Integer.parseInt(serverPort)).sync();
+            b.connect(service.getIp(), service.getPort()).sync();
             respData = (byte[]) sendHandler.respData();
             logger.debug("SendRequest get reply: {}", respData);
         } finally {
@@ -76,17 +72,13 @@ public class NettyNetClient implements NetClient {
     @Override
     public RpcResponse sendRequest(RpcRequest rpcRequest, Service service, MessageProtocol messageProtocol) {
 
-        String address = service.getAddress();
-        synchronized (address) {
+        String address = service.getIp() + ":" + service.getPort();
+        synchronized (address.intern()) {
             if (connectedServerNodes.containsKey(address)) {
                 SendHandlerV2 handler = connectedServerNodes.get(address);
                 logger.info("使用现有的连接");
                 return handler.sendRequest(rpcRequest);
             }
-
-            String[] addrInfo = address.split(":");
-            final String serverAddress = addrInfo[0];
-            final String serverPort = addrInfo[1];
             final SendHandlerV2 handler = new SendHandlerV2(messageProtocol, address);
             threadPool.submit(() -> {
                         // 配置客户端
@@ -103,7 +95,7 @@ public class NettyNetClient implements NetClient {
                                     }
                                 });
                         // 启用客户端连接
-                        ChannelFuture channelFuture = b.connect(serverAddress, Integer.parseInt(serverPort));
+                        ChannelFuture channelFuture = b.connect(service.getIp(), service.getPort());
                         channelFuture.addListener(new ChannelFutureListener() {
                             @Override
                             public void operationComplete(ChannelFuture channelFuture) throws Exception {

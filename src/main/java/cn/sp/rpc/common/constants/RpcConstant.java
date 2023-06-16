@@ -49,4 +49,9 @@ public class RpcConstant {
      */
     public static final String BALANCE_SMOOTH_WEIGHT_ROUND = "smoothWeightRound";
 
+    /**
+     * nacos group name
+     */
+    public static final String NACOS_APP_GROUP_NAME = "PRC_GROUP";
+
 }

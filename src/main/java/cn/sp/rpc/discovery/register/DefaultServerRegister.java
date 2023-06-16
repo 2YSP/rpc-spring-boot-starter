@@ -37,8 +37,8 @@ public class DefaultServerRegister implements ServerRegister {
         serviceMap.put(so.getName(), so);
         Service service = new Service();
         String host = InetAddress.getLocalHost().getHostAddress();
-        String address = host + ":" + rpcConfig.getServerPort();
-        service.setAddress(address);
+        service.setIp(host);
+        service.setPort(rpcConfig.getServerPort());
         service.setName(so.getClazz().getName());
         service.setProtocol(rpcConfig.getProtocol());
         service.setWeight(rpcConfig.getWeight());

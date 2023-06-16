@@ -5,7 +5,6 @@ import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.spi.balance.LoadBalance;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,27 +44,4 @@ public class SmoothWeightRoundBalance implements LoadBalance {
         return maxWeightServer;
     }
 
-    public static void main(String[] args) {
-        List<Service> services = new ArrayList<>(3);
-        Service service = new Service();
-        service.setAddress("196.128.6.1");
-        service.setWeight(1);
-        services.add(service);
-
-        Service service2 = new Service();
-        service2.setAddress("196.128.6.2");
-        service2.setWeight(3);
-        services.add(service2);
-
-        Service service3 = new Service();
-        service3.setAddress("196.128.6.3");
-        service3.setWeight(5);
-        services.add(service3);
-
-        LoadBalance loadBalance = new SmoothWeightRoundBalance();
-        System.out.println("20次请求负载均衡结果为:");
-        for(int i=1;i<=20;i++){
-            System.out.println("第"+i+"次请求服务ip为："+loadBalance.chooseOne(services).getAddress());
-        }
-    }
 }

@@ -20,10 +20,10 @@ public interface ServerDiscovery {
 
     /**
      * 根据服务名查找服务列表
-     * @param name
+     * @param serviceName
      * @return
      */
-    List<Service> findServiceList(String name);
+    List<Service> findServiceList(String serviceName);
 
     /**
      * 注册服务监听

@@ -65,12 +65,12 @@ public class ZookeeperServerDiscovery implements ServerDiscovery {
      * 使用Zookeeper客户端，通过服务名获取服务列表
      * 服务名格式：接口全路径
      *
-     * @param name
+     * @param serviceName
      * @return
      */
     @Override
-    public List<Service> findServiceList(String name) {
-        String servicePath = RpcConstant.ZK_SERVICE_PATH + RpcConstant.PATH_DELIMITER + name + "/service";
+    public List<Service> findServiceList(String serviceName) {
+        String servicePath = RpcConstant.ZK_SERVICE_PATH + RpcConstant.PATH_DELIMITER + serviceName + "/service";
         List<String> children = zkClient.getChildren(servicePath);
         return Optional.ofNullable(children).orElse(new ArrayList<>()).stream().map(str -> {
             String deCh = null;

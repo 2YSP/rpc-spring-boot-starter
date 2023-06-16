@@ -9,9 +9,10 @@ import cn.sp.rpc.client.net.ClientProxyFactory;
 import cn.sp.rpc.client.net.NetClientFactory;
 import cn.sp.rpc.common.exception.RpcException;
 import cn.sp.rpc.config.properties.RpcConfig;
-import cn.sp.rpc.discovery.register.DefaultServerRegister;
 import cn.sp.rpc.discovery.ServerDiscovery;
 import cn.sp.rpc.discovery.ServerRegister;
+import cn.sp.rpc.discovery.nacos.NacosServerDiscovery;
+import cn.sp.rpc.discovery.register.DefaultServerRegister;
 import cn.sp.rpc.discovery.zk.ZookeeperServerDiscovery;
 import cn.sp.rpc.server.NettyRpcServer;
 import cn.sp.rpc.server.RequestHandler;
@@ -20,6 +21,7 @@ import cn.sp.rpc.server.register.DefaultRpcProcessor;
 import cn.sp.rpc.spi.balance.LoadBalance;
 import cn.sp.rpc.spi.protocol.MessageProtocol;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,9 +56,17 @@ public class RpcAutoConfiguration {
         return new NettyRpcServer(rpcConfig.getServerPort(), rpcConfig.getProtocol(), requestHandler);
     }
 
+    @ConditionalOnProperty(name = "sp.rpc.registerCenterType", havingValue = "zk")
     @Bean
-    public ServerDiscovery serverDiscovery() {
+    public ServerDiscovery zookeeperServerDiscovery() {
         ServerDiscovery serverDiscovery = new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress());
+        return serverDiscovery;
+    }
+
+    @ConditionalOnProperty(name = "sp.rpc.registerCenterType", havingValue = "nacos")
+    @Bean
+    public ServerDiscovery nacosServerDiscovery() {
+        ServerDiscovery serverDiscovery = new NacosServerDiscovery(rpcConfig.getRegisterAddress());
         return serverDiscovery;
     }
 
@@ -65,7 +75,7 @@ public class RpcAutoConfiguration {
         return new DefaultServerRegister(serverDiscovery, rpcConfig);
     }
 
-
+    @ConditionalOnProperty
     @Bean
     public ServerDiscoveryManager serverDiscoveryManager(ServerDiscovery serverDiscovery) {
         return new ServerDiscoveryManager(serverDiscovery);

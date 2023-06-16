@@ -1,6 +1,10 @@
 package cn.sp.rpc.config.properties;
 
+import cn.sp.rpc.common.constants.RegisterCenterTypeEnum;
+import cn.sp.rpc.common.exception.RpcException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author 2YSP
@@ -35,6 +39,12 @@ public class RpcConfig {
      */
     private Integer weight = 1;
 
+    @PostConstruct
+    public void check() {
+        if (RegisterCenterTypeEnum.getByCode(this.registerCenterType) == null) {
+            throw new RpcException("注册中心类型配置错误！");
+        }
+    }
 
     public String getRegisterCenterType() {
         return registerCenterType;

@@ -1,7 +1,5 @@
 package cn.sp.rpc.common.model;
 
-import java.util.Objects;
-
 /**
  * @author 2YSP
  * @date 2020/7/25 19:46
@@ -16,9 +14,14 @@ public class Service {
      */
     private String protocol;
     /**
-     *  服务地址，格式：ip:port
+     * 服务地址ip
      */
-    private String address;
+    private String ip;
+    /**
+     * 服务地址端口号
+     */
+    private Integer port;
+
     /**
      * 权重，越大优先级越高
      */
@@ -49,37 +52,19 @@ public class Service {
         this.protocol = protocol;
     }
 
-    public String getAddress() {
-        return address;
+    public String getIp() {
+        return ip;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
-    @Override
-    public String toString() {
-        return "Service{" +
-                "name='" + name + '\'' +
-                ", protocol='" + protocol + '\'' +
-                ", address='" + address + '\'' +
-                ", weight=" + weight +
-                '}';
+    public Integer getPort() {
+        return port;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Service service = (Service) o;
-        return Objects.equals(name, service.name) &&
-                Objects.equals(protocol, service.protocol) &&
-                Objects.equals(address, service.address) &&
-                Objects.equals(weight, service.weight);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, protocol, address, weight);
+    public void setPort(Integer port) {
+        this.port = port;
     }
 }
