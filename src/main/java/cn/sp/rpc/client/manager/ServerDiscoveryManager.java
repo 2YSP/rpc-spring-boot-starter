@@ -35,7 +35,7 @@ public class ServerDiscoveryManager {
      */
     public List<Service> getServiceList(String serviceName) {
         List<Service> services;
-        synchronized (serviceName) {
+        synchronized (serviceName.intern()) {
             if (ServerDiscoveryCache.isEmpty(serviceName)) {
                 services = serverDiscovery.findServiceList(serviceName);
                 if (services == null || services.size() == 0) {

@@ -1,5 +1,6 @@
 package cn.sp.rpc.discovery.nacos;
 
+import cn.sp.rpc.client.cache.ServerDiscoveryCache;
 import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.exception.RpcException;
 import cn.sp.rpc.common.model.Service;
@@ -7,6 +8,7 @@ import cn.sp.rpc.discovery.ServerDiscovery;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Ship
@@ -58,16 +61,19 @@ public class NacosServerDiscovery implements ServerDiscovery {
 
     @Override
     public List<Service> findServiceList(String serviceName) {
+        List<Instance> instanceList = null;
         try {
-            List<Instance> instanceList = namingService.getAllInstances(serviceName);
-            if (CollectionUtils.isEmpty(instanceList)) {
-                return Lists.newArrayList();
-            }
-            instanceList.forEach(instance -> convertToService(instance));
+            instanceList = namingService.getAllInstances(serviceName);
         } catch (NacosException e) {
-
+            logger.error("get all instances fail", e);
+            throw new RpcException("get all instances fail");
         }
-        return null;
+        if (CollectionUtils.isEmpty(instanceList)) {
+            return Lists.newArrayList();
+        }
+        return instanceList.stream()
+                .filter(i -> i.isHealthy())
+                .map(instance -> convertToService(instance)).collect(Collectors.toList());
     }
 
     private Service convertToService(Instance instance) {
@@ -83,6 +89,25 @@ public class NacosServerDiscovery implements ServerDiscovery {
 
     @Override
     public void registerChangeListener() {
-
+        ServerDiscoveryCache.SERVICE_CLASS_NAMES.forEach(serviceName -> {
+            try {
+                namingService.subscribe(serviceName, event -> {
+                    if (event instanceof NamingEvent) {
+                        List<Instance> instances = ((NamingEvent) event).getInstances();
+                        if (CollectionUtils.isEmpty(instances)) {
+                            ServerDiscoveryCache.removeAll(serviceName);
+                        }
+                        List<Service> serviceList = instances.stream().filter(i -> i.isHealthy()).map(this::convertToService).collect(Collectors.toList());
+                        if (CollectionUtils.isEmpty(serviceList)) {
+                            ServerDiscoveryCache.removeAll(serviceName);
+                        } else {
+                            ServerDiscoveryCache.put(serviceName, serviceList);
+                        }
+                    }
+                });
+            } catch (NacosException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
