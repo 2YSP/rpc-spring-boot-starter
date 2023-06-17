@@ -33,6 +33,10 @@ public class RpcConstant {
      */
     public static final String PROTOCOL_KRYO = "kryo";
     /**
+     * hessian序列化协议
+     */
+    public static final String PROTOCOL_HESSIAN = "hessian";
+    /**
      * 随机
      */
     public static final String BALANCE_RANDOM = "random";

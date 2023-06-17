@@ -1,5 +1,7 @@
 package cn.sp.rpc.spi.protocol.impl;
 
+import cn.sp.rpc.annotation.MessageProtocolAno;
+import cn.sp.rpc.common.constants.RpcConstant;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.spi.protocol.MessageProtocol;
@@ -21,6 +23,7 @@ import java.util.Map;
  * @description:
  * @date 2023/06/15 14:00
  */
+@MessageProtocolAno(RpcConstant.PROTOCOL_HESSIAN)
 public class HessianMessageProtocol implements MessageProtocol {
 
     private final static SerializerFactory serializerFactory = new SerializerFactory();

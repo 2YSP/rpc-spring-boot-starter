@@ -63,7 +63,7 @@ public class NacosServerDiscovery implements ServerDiscovery {
     public List<Service> findServiceList(String serviceName) {
         List<Instance> instanceList = null;
         try {
-            instanceList = namingService.getAllInstances(serviceName);
+            instanceList = namingService.getAllInstances(serviceName, RpcConstant.NACOS_APP_GROUP_NAME);
         } catch (NacosException e) {
             logger.error("get all instances fail", e);
             throw new RpcException("get all instances fail");
@@ -79,7 +79,8 @@ public class NacosServerDiscovery implements ServerDiscovery {
     private Service convertToService(Instance instance) {
         Service service = new Service();
         service.setWeight((int) instance.getWeight());
-        service.setName(instance.getServiceName());
+        // PRC_GROUP@@cn.sp.UserService 转成 cn.sp.UserService
+        service.setName(instance.getServiceName().replace(RpcConstant.NACOS_APP_GROUP_NAME + "@@", ""));
         Map<String, String> metadata = instance.getMetadata();
         service.setProtocol(metadata.get("protocol"));
         service.setIp(instance.getIp());
@@ -91,7 +92,7 @@ public class NacosServerDiscovery implements ServerDiscovery {
     public void registerChangeListener() {
         ServerDiscoveryCache.SERVICE_CLASS_NAMES.forEach(serviceName -> {
             try {
-                namingService.subscribe(serviceName, event -> {
+                namingService.subscribe(serviceName, RpcConstant.NACOS_APP_GROUP_NAME, event -> {
                     if (event instanceof NamingEvent) {
                         List<Instance> instances = ((NamingEvent) event).getInstances();
                         if (CollectionUtils.isEmpty(instances)) {

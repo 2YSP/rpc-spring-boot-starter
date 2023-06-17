@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import javax.annotation.Resource;
 
@@ -41,33 +42,15 @@ public class RpcAutoConfiguration {
     @Resource
     private RpcConfig rpcConfig;
 
-
-    @Bean
-    public RequestHandler requestHandler(@Autowired ServerRegister serverRegister) {
-        MessageProtocol messageProtocol = MessageProtocolsManager.get(rpcConfig.getProtocol());
-        if (messageProtocol == null) {
-            throw new RpcException("invalid message protocol config!");
-        }
-        return new RequestHandler(messageProtocol, serverRegister);
-    }
-
-    @Bean
-    public RpcServer rpcServer(@Autowired RequestHandler requestHandler) {
-        return new NettyRpcServer(rpcConfig.getServerPort(), rpcConfig.getProtocol(), requestHandler);
-    }
-
-    @ConditionalOnProperty(name = "sp.rpc.registerCenterType", havingValue = "zk")
-    @Bean
-    public ServerDiscovery zookeeperServerDiscovery() {
-        ServerDiscovery serverDiscovery = new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress());
-        return serverDiscovery;
-    }
-
-    @ConditionalOnProperty(name = "sp.rpc.registerCenterType", havingValue = "nacos")
     @Bean
     public ServerDiscovery nacosServerDiscovery() {
-        ServerDiscovery serverDiscovery = new NacosServerDiscovery(rpcConfig.getRegisterAddress());
-        return serverDiscovery;
+        if ("nacos".equals(rpcConfig.getRegisterCenterType())) {
+            return new NacosServerDiscovery(rpcConfig.getRegisterAddress());
+        }
+        if ("zk".equals(rpcConfig.getRegisterCenterType())) {
+            return new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress());
+        }
+        throw new RpcException("注册中心类型配置错误");
     }
 
     @Bean
@@ -75,9 +58,9 @@ public class RpcAutoConfiguration {
         return new DefaultServerRegister(serverDiscovery, rpcConfig);
     }
 
-    @ConditionalOnProperty
+
     @Bean
-    public ServerDiscoveryManager serverDiscoveryManager(ServerDiscovery serverDiscovery) {
+    public ServerDiscoveryManager serverDiscoveryManager(@Autowired ServerDiscovery serverDiscovery) {
         return new ServerDiscoveryManager(serverDiscovery);
     }
 
@@ -103,6 +86,19 @@ public class RpcAutoConfiguration {
         return clientProxyFactory;
     }
 
+    @Bean
+    public RequestHandler requestHandler(@Autowired ServerRegister serverRegister) {
+        MessageProtocol messageProtocol = MessageProtocolsManager.get(rpcConfig.getProtocol());
+        if (messageProtocol == null) {
+            throw new RpcException("invalid message protocol config!");
+        }
+        return new RequestHandler(messageProtocol, serverRegister);
+    }
+
+    @Bean
+    public RpcServer rpcServer(@Autowired RequestHandler requestHandler) {
+        return new NettyRpcServer(rpcConfig.getServerPort(), rpcConfig.getProtocol(), requestHandler);
+    }
 
     @Bean
     public DefaultRpcProcessor rpcProcessor(@Autowired ClientProxyFactory clientProxyFactory,
