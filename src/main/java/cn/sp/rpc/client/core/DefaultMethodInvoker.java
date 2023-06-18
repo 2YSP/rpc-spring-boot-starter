@@ -33,7 +33,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
     }
 
     @Override
-    public Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args) {
+    public Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args, Boolean generic) {
         // 1.获得服务信息
         String serviceName = interfaceClassName;
         List<Service> services = serverDiscoveryManager.getServiceList(serviceName);
@@ -45,6 +45,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
         request.setMethod(methodName);
         request.setParameters(args);
         request.setParameterTypeNames(parameterTypeNames);
+        request.setGeneric(generic);
         // 3.协议层编组
         MessageProtocol messageProtocol = MessageProtocolsManager.get(service.getProtocol());
         RpcResponse response = netClient.sendRequest(request, service, messageProtocol);

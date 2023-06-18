@@ -22,7 +22,7 @@ public class DefaultGenericService implements GenericService {
 
     @Override
     public Object $invoke(String methodName, String[] parameterTypeNames, Object[] args) {
-        return methodInvoker.$invoke(interfaceClassName, methodName, parameterTypeNames, args);
+        return methodInvoker.$invoke(interfaceClassName, methodName, parameterTypeNames, args, true);
     }
 
 

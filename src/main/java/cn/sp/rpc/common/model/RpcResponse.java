@@ -1,6 +1,7 @@
 package cn.sp.rpc.common.model;
 
 import cn.sp.rpc.common.constants.RpcStatusEnum;
+import cn.sp.rpc.common.exception.RpcException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,9 +19,9 @@ public class RpcResponse implements Serializable {
 
     private Object returnValue;
 
-    private Exception exception;
+    private RpcException exception;
 
-    private RpcStatusEnum rpcStatus;
+    private Integer rpcStatus;
 
     public RpcResponse() {
     }
@@ -34,7 +35,7 @@ public class RpcResponse implements Serializable {
     }
 
     public RpcResponse(RpcStatusEnum rpcStatus) {
-        this.rpcStatus = rpcStatus;
+        this.rpcStatus = rpcStatus.getCode();
     }
 
     public Map<String, String> getHeaders() {
@@ -53,19 +54,19 @@ public class RpcResponse implements Serializable {
         this.returnValue = returnValue;
     }
 
-    public Exception getException() {
+    public RpcException getException() {
         return exception;
     }
 
-    public void setException(Exception exception) {
+    public void setException(RpcException exception) {
         this.exception = exception;
     }
 
-    public RpcStatusEnum getRpcStatus() {
+    public Integer getRpcStatus() {
         return rpcStatus;
     }
 
-    public void setRpcStatus(RpcStatusEnum rpcStatus) {
+    public void setRpcStatus(Integer rpcStatus) {
         this.rpcStatus = rpcStatus;
     }
 }

@@ -1,5 +1,6 @@
 package cn.sp.rpc.server;
 
+import cn.sp.rpc.common.exception.RpcException;
 import cn.sp.rpc.spi.protocol.MessageProtocol;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
@@ -7,6 +8,8 @@ import cn.sp.rpc.common.constants.RpcStatusEnum;
 import cn.sp.rpc.discovery.ServerRegister;
 import cn.sp.rpc.discovery.ServiceObject;
 import cn.sp.rpc.util.ReflectUtils;
+import cn.sp.rpc.util.RpcResponseUtils;
+import com.alibaba.fastjson.JSON;
 
 import java.lang.reflect.Method;
 
@@ -47,10 +50,15 @@ public class RequestHandler {
                 Method method = so.getClazz().getMethod(req.getMethod(), ReflectUtils.convertToParameterTypes(req.getParameterTypeNames()));
                 Object returnValue = method.invoke(so.getObj(), req.getParameters());
                 response = new RpcResponse(RpcStatusEnum.SUCCESS);
-                response.setReturnValue(returnValue);
+                if (req.getGeneric()) {
+                    response.setReturnValue(RpcResponseUtils.handlerReturnValue(returnValue));
+                } else {
+                    response.setReturnValue(returnValue);
+                }
             } catch (Exception e) {
                 response = new RpcResponse(RpcStatusEnum.ERROR);
-                response.setException(e);
+                String errMsg = JSON.toJSONString(e);
+                response.setException(new RpcException(errMsg));
             }
         }
         // 编组响应消息

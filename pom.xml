@@ -19,7 +19,7 @@
         <protostuff.version>1.0.7</protostuff.version>
         <kryo.version>4.0.2</kryo.version>
         <nacos-client.version>1.4.4</nacos-client.version>
-        <hessian.version>3.3.8</hessian.version>
+        <hessian.version>4.0.4</hessian.version>
     </properties>
 
     <dependencies>

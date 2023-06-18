@@ -54,7 +54,7 @@ public class ClientProxyFactory {
             if (method.getName().equals("hashCode")) {
                 return 0;
             }
-            return methodInvoker.$invoke(clazz.getName(), method.getName(), ReflectUtils.getParameterTypeNames(method), args);
+            return methodInvoker.$invoke(clazz.getName(), method.getName(), ReflectUtils.getParameterTypeNames(method), args, false);
         }
     }
 

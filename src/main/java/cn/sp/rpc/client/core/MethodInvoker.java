@@ -15,5 +15,5 @@ public interface MethodInvoker {
      * @param args
      * @return
      */
-    Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args);
+    Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args,Boolean generic);
 }

@@ -22,12 +22,19 @@ public class RpcRequest implements Serializable {
 
     private Map<String, String> headers = new HashMap<>();
 
-    @Deprecated
-    private Class<?>[] parameterTypes;
-
     private String[] parameterTypeNames;
 
     private Object[] parameters;
+
+    private Boolean generic;
+
+    public Boolean getGeneric() {
+        return generic;
+    }
+
+    public void setGeneric(Boolean generic) {
+        this.generic = generic;
+    }
 
     public String getRequestId() {
         return requestId;
@@ -61,13 +68,6 @@ public class RpcRequest implements Serializable {
         this.headers = headers;
     }
 
-    public Class<?>[] getParameterTypes() {
-        return parameterTypes;
-    }
-
-    public void setParameterTypes(Class<?>[] parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
 
     public Object[] getParameters() {
         return parameters;

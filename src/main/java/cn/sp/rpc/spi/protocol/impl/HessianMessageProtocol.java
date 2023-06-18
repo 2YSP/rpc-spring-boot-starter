@@ -2,6 +2,7 @@ package cn.sp.rpc.spi.protocol.impl;
 
 import cn.sp.rpc.annotation.MessageProtocolAno;
 import cn.sp.rpc.common.constants.RpcConstant;
+import cn.sp.rpc.common.constants.RpcStatusEnum;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.spi.protocol.MessageProtocol;
@@ -50,7 +51,13 @@ public class HessianMessageProtocol implements MessageProtocol {
         hin.setSerializerFactory(serializerFactory);
         Object dst = hin.readObject();
         hin.close();
-        return (RpcRequest) dst;
+        RpcRequest rpcRequest = (RpcRequest) dst;
+        for (int i = 0; i < rpcRequest.getParameterTypeNames().length; i++) {
+            if ("java.lang.Long".equals(rpcRequest.getParameterTypeNames()[i]) && rpcRequest.getParameters()[i] != null) {
+                rpcRequest.getParameters()[i] = Long.valueOf(rpcRequest.getParameters()[i].toString());
+            }
+        }
+        return rpcRequest;
     }
 
     @Override
@@ -81,8 +88,8 @@ public class HessianMessageProtocol implements MessageProtocol {
         request.setRequestId("001");
         request.setServiceName("user-service");
         request.setMethod("sayHello");
-        request.setParameterTypeNames(new String[]{"java.lang.String"});
-        request.setParameters(new Object[]{"hello"});
+        request.setParameterTypeNames(new String[]{"java.lang.Long"});
+        request.setParameters(new Object[]{1L});
 
         HessianMessageProtocol hessianMessageProtocol = new HessianMessageProtocol();
         byte[] bytes = hessianMessageProtocol.marshallingRequest(request);
@@ -90,5 +97,18 @@ public class HessianMessageProtocol implements MessageProtocol {
 
         RpcRequest request1 = hessianMessageProtocol.unmarshallingRequest(bytes);
         System.out.println(request1);
+
+        RpcResponse response = new RpcResponse();
+        response.setRequestId("001");
+        response.setReturnValue("aaa");
+        response.setRpcStatus(RpcStatusEnum.SUCCESS.getCode());
+
+        byte[] bytes1 = hessianMessageProtocol.marshallingResponse(response);
+
+        RpcResponse rpcResponse = hessianMessageProtocol.unmarshallingResponse(bytes1);
+        System.out.println(rpcResponse.toString());
+
     }
+
+
 }

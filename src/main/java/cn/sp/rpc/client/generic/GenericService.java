@@ -1,5 +1,6 @@
 package cn.sp.rpc.client.generic;
 
+
 /**
  * @author Ship
  * @version 1.0.0
