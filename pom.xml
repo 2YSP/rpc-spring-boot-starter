@@ -8,7 +8,7 @@
         <version>2.3.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.github.ship</groupId>
+    <groupId>io.github.2ysp</groupId>
     <artifactId>ship-rpc-spring-boot-starter</artifactId>
     <version>1.0.0-RELEASE</version>
     <name>rpc-spring-boot-starter</name>
