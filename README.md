@@ -14,10 +14,10 @@ mvn  clean install -DskipTests=true
 ```
 3. 添加maven依赖到你的项目中
  ```xml
-   <dependency>
-            <groupId>cn.sp.rpc</groupId>
-            <artifactId>rpc-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+        <dependency>
+            <groupId>com.github.ship</groupId>
+            <artifactId>ship-rpc-spring-boot-starter</artifactId>
+            <version>1.0.0-RELEASE</version>
         </dependency>
  ```
  ## 客户端
@@ -46,21 +46,22 @@ public class TestController {
 
  ## 服务端
  提供远程方法并注入IOC
+
  ```java
- import cn.sp.rpc.annotation.Service;
+ import Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
-    private static  Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     @Override
     public ApiResult<User> getUser(Long id) {
         logger.info("现在是【2】号提供服务");
-        User user = new User(1L,"XX",2,"www.aa.com");
+        User user = new User(1L, "XX", 2, "www.aa.com");
         return ApiResult.success(user);
     }
 }

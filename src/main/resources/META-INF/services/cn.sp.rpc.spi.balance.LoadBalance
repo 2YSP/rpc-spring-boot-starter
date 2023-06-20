@@ -1,4 +1,0 @@
-cn.sp.rpc.spi.balance.impl.RandomBalance
-cn.sp.rpc.spi.balance.impl.FullRoundBalance
-cn.sp.rpc.spi.balance.impl.WeightRoundBalance
-cn.sp.rpc.spi.balance.impl.SmoothWeightRoundBalance

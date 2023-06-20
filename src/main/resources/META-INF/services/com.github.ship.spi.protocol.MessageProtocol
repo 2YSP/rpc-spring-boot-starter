@@ -1,0 +1,4 @@
+com.github.ship.spi.protocol.impl.JavaSerializeMessageProtocol
+com.github.ship.spi.protocol.impl.ProtoBufMessageProtocol
+com.github.ship.spi.protocol.impl.KryoMessageProtocol
+com.github.ship.spi.protocol.impl.HessianMessageProtocol
