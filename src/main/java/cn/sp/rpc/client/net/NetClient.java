@@ -14,7 +14,12 @@ import cn.sp.rpc.common.model.RpcResponse;
  */
 public interface NetClient {
 
-    byte[] sendRequest(byte[] data, Service service) throws InterruptedException;
-
+    /**
+     * 发送请求
+     * @param rpcRequest
+     * @param service
+     * @param messageProtocol
+     * @return
+     */
     RpcResponse sendRequest(RpcRequest rpcRequest, Service service, MessageProtocol messageProtocol);
 }

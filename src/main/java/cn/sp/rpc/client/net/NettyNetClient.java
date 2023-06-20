@@ -1,12 +1,11 @@
 package cn.sp.rpc.client.net;
 
 
-import cn.sp.rpc.client.net.handler.SendHandler;
 import cn.sp.rpc.client.net.handler.SendHandlerV2;
-import cn.sp.rpc.common.model.Service;
-import cn.sp.rpc.spi.protocol.MessageProtocol;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
+import cn.sp.rpc.common.model.Service;
+import cn.sp.rpc.spi.protocol.MessageProtocol;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -40,34 +39,6 @@ public class NettyNetClient implements NetClient {
      * key: 服务地址，格式：ip:port
      */
     public static Map<String, SendHandlerV2> connectedServerNodes = new ConcurrentHashMap<>();
-
-    @Override
-    public byte[] sendRequest(byte[] data, Service service) throws InterruptedException {
-        SendHandler sendHandler = new SendHandler(data);
-        byte[] respData;
-        // 配置客户端
-        EventLoopGroup loopGroup = new NioEventLoopGroup();
-        try {
-            Bootstrap b = new Bootstrap();
-            b.group(loopGroup).channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(sendHandler);
-                        }
-                    });
-            // 启用客户端连接
-            b.connect(service.getIp(), service.getPort()).sync();
-            respData = (byte[]) sendHandler.respData();
-            logger.debug("SendRequest get reply: {}", respData);
-        } finally {
-            loopGroup.shutdownGracefully();
-        }
-
-        return respData;
-    }
 
     @Override
     public RpcResponse sendRequest(RpcRequest rpcRequest, Service service, MessageProtocol messageProtocol) {

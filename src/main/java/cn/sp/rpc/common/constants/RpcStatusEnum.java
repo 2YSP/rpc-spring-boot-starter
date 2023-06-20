@@ -18,16 +18,16 @@ public enum RpcStatusEnum {
      */
     NOT_FOUND(404, "NOT FOUND");
 
-    private int code;
+    private Integer code;
 
     private String desc;
 
-    RpcStatusEnum(int code,String desc){
+    RpcStatusEnum(Integer code,String desc){
         this.code = code;
         this.desc = desc;
     }
 
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 

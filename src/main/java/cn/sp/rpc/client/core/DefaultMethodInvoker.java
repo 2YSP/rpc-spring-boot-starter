@@ -3,6 +3,7 @@ package cn.sp.rpc.client.core;
 import cn.sp.rpc.client.manager.MessageProtocolsManager;
 import cn.sp.rpc.client.manager.ServerDiscoveryManager;
 import cn.sp.rpc.client.net.NetClient;
+import cn.sp.rpc.common.constants.RpcStatusEnum;
 import cn.sp.rpc.common.model.RpcRequest;
 import cn.sp.rpc.common.model.RpcResponse;
 import cn.sp.rpc.common.model.Service;
@@ -53,8 +54,11 @@ public class DefaultMethodInvoker implements MethodInvoker {
             throw new RpcException("the response is null");
         }
         // 6.结果处理
-        if (response.getException() != null) {
-            return response.getException();
+        if (RpcStatusEnum.ERROR.getCode().equals(response.getRpcStatus())) {
+            throw response.getException();
+        }
+        if (RpcStatusEnum.NOT_FOUND.getCode().equals(response.getRpcStatus())) {
+            throw new RpcException(" service not found!");
         }
         return response.getReturnValue();
     }

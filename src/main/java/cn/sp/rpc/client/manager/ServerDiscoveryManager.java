@@ -1,11 +1,14 @@
 package cn.sp.rpc.client.manager;
 
 import cn.sp.rpc.client.cache.ServerDiscoveryCache;
-import cn.sp.rpc.discovery.ServerDiscovery;
-import cn.sp.rpc.common.model.Service;
 import cn.sp.rpc.common.exception.RpcException;
+import cn.sp.rpc.common.model.Service;
+import cn.sp.rpc.discovery.ServerDiscovery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @Author: Ship
@@ -14,6 +17,8 @@ import java.util.List;
  */
 public class ServerDiscoveryManager {
 
+    private static Logger logger = LoggerFactory.getLogger(ServerDiscoveryManager.class);
+
     private ServerDiscovery serverDiscovery;
 
     public ServerDiscoveryManager(ServerDiscovery serverDiscovery) {
@@ -21,7 +26,7 @@ public class ServerDiscoveryManager {
     }
 
     /**
-     *
+     * 注册监听
      */
     public void registerChangeListener() {
         serverDiscovery.registerChangeListener();
@@ -34,18 +39,22 @@ public class ServerDiscoveryManager {
      * @return
      */
     public List<Service> getServiceList(String serviceName) {
-        List<Service> services;
-        synchronized (serviceName.intern()) {
-            if (ServerDiscoveryCache.isEmpty(serviceName)) {
-                services = serverDiscovery.findServiceList(serviceName);
+        List<Service> serviceList = null;
+        try {
+            serviceList = ServerDiscoveryCache.get(serviceName, () -> {
+                List<Service> services = serverDiscovery.findServiceList(serviceName);
                 if (services == null || services.size() == 0) {
                     throw new RpcException("No provider available!");
                 }
-                ServerDiscoveryCache.put(serviceName, services);
-            } else {
-                services = ServerDiscoveryCache.get(serviceName);
-            }
+                return services;
+            });
+        } catch (ExecutionException e) {
+            logger.error("加载服务列表缓存异常", e);
+            throw new RpcException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("加载服务列表缓存异常", e);
+            throw new RpcException(e.getMessage());
         }
-        return services;
+        return serviceList;
     }
 }
