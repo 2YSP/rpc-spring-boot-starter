@@ -21,7 +21,6 @@ import cn.sp.rpc.server.register.DefaultRpcProcessor;
 import cn.sp.rpc.spi.balance.LoadBalance;
 import cn.sp.rpc.spi.protocol.MessageProtocol;
 import cn.sp.rpc.util.SpringContextHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -59,13 +58,13 @@ public class RpcAutoConfiguration {
     }
 
     @Bean
-    public ServerRegister serverRegister(@Autowired ServerDiscovery serverDiscovery) {
+    public ServerRegister serverRegister(ServerDiscovery serverDiscovery) {
         return new DefaultServerRegister(serverDiscovery, rpcConfig);
     }
 
 
     @Bean
-    public ServerDiscoveryManager serverDiscoveryManager(@Autowired ServerDiscovery serverDiscovery) {
+    public ServerDiscoveryManager serverDiscoveryManager(ServerDiscovery serverDiscovery) {
         return new ServerDiscoveryManager(serverDiscovery);
     }
 
@@ -78,21 +77,21 @@ public class RpcAutoConfiguration {
     }
 
     @Bean
-    public DefaultMethodInvoker methodInvoker(@Autowired ServerDiscoveryManager manager,
-                                              @Autowired LoadBalance loadBalance) {
+    public DefaultMethodInvoker methodInvoker(ServerDiscoveryManager manager,
+                                              LoadBalance loadBalance) {
         return new DefaultMethodInvoker(manager, NetClientFactory.getInstance(), loadBalance);
     }
 
 
     @Bean
-    public ClientProxyFactory proxyFactory(@Autowired MethodInvoker methodInvoker) {
+    public ClientProxyFactory proxyFactory(MethodInvoker methodInvoker) {
         ClientProxyFactory clientProxyFactory = new ClientProxyFactory();
         clientProxyFactory.setMethodInvoker(methodInvoker);
         return clientProxyFactory;
     }
 
     @Bean
-    public RequestHandler requestHandler(@Autowired ServerRegister serverRegister) {
+    public RequestHandler requestHandler(ServerRegister serverRegister) {
         MessageProtocol messageProtocol = MessageProtocolsManager.get(rpcConfig.getProtocol());
         if (messageProtocol == null) {
             throw new RpcException("invalid message protocol config!");
@@ -101,15 +100,15 @@ public class RpcAutoConfiguration {
     }
 
     @Bean
-    public RpcServer rpcServer(@Autowired RequestHandler requestHandler) {
+    public RpcServer rpcServer(RequestHandler requestHandler) {
         return new NettyRpcServer(rpcConfig.getServerPort(), rpcConfig.getProtocol(), requestHandler);
     }
 
     @Bean
-    public DefaultRpcProcessor rpcProcessor(@Autowired ClientProxyFactory clientProxyFactory,
-                                            @Autowired ServerRegister serverRegister,
-                                            @Autowired RpcServer rpcServer,
-                                            @Autowired ServerDiscoveryManager manager) {
+    public DefaultRpcProcessor rpcProcessor(ClientProxyFactory clientProxyFactory,
+                                            ServerRegister serverRegister,
+                                            RpcServer rpcServer,
+                                            ServerDiscoveryManager manager) {
         return new DefaultRpcProcessor(clientProxyFactory, serverRegister, rpcServer, manager);
     }
 
