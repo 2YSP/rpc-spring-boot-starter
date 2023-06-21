@@ -1,6 +1,7 @@
 # ship-rpc-spring-boot-starter
 ![](https://img.shields.io/github/stars/2YSP/rpc-spring-boot-starter.svg)
 ![](https://img.shields.io/github/forks/2YSP/rpc-spring-boot-starter.svg)
+![](https://img.shields.io/github/release/2YSP/rpc-spring-boot-starter.svg)
 ![](https://img.shields.io/github/downloads/2YSP/rpc-spring-boot-starter/total.svg)
 
 基于netty实现的高性能可扩展RPC框架
