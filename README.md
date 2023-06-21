@@ -28,7 +28,9 @@
 
 
  
- 1. 使用@InjectService注解注入远程方法
+**1. 普通RPC调用**
+
+引入接口依赖，使用@InjectService注解注入远程方法
  ```java
  @RestController
 @RequestMapping("test")
@@ -44,7 +46,7 @@ public class TestController {
 }
  ```
 
-2. 泛化调用
+**2. 泛化调用**
  ```java
 @RestController
 @RequestMapping("/GenericTest")
@@ -115,6 +117,15 @@ public class UserServiceImpl implements UserService{
 |    sp.rpc.server-port |  服务端通信端口号     |  默认9999|
 | sp.rpc.weight | 权重 |默认1  |  
 
+**启动顺序：** 注册中心——> 服务端 ——> 客户端
+
 **用法示例：** https://github.com/2YSP/rpc-example
 
 **文章：** https://www.cnblogs.com/2YSP/p/13545217.html
+
+# 三、TODO List
+- 执行链动态Filter
+- 支持链路追踪
+- RPC上下文传递等
+
+
