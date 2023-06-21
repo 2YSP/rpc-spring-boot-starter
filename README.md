@@ -18,7 +18,7 @@
 添加maven依赖到你的项目中
  ```xml
         <dependency>
-            <groupId>com.github.ship</groupId>
+            <groupId>io.github.2ysp</groupId>
             <artifactId>ship-rpc-spring-boot-starter</artifactId>
             <version>1.0.0-RELEASE</version>
         </dependency>
