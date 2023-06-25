@@ -47,7 +47,7 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
 
     private CountDownLatch latch = new CountDownLatch(1);
 
-    public SendHandlerV2(MessageProtocol messageProtocol,String remoteAddress) {
+    public SendHandlerV2(MessageProtocol messageProtocol, String remoteAddress) {
         this.messageProtocol = messageProtocol;
         this.remoteAddress = remoteAddress;
     }
@@ -55,12 +55,12 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         this.channel = ctx.channel();
-        latch.countDown();
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         logger.debug("Connect to server successfully:{}", ctx);
+        latch.countDown();
     }
 
     @Override
@@ -73,6 +73,10 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
         ReferenceCountUtil.release(byteBuf);
         RpcResponse response = messageProtocol.unmarshallingResponse(resp);
         RpcFuture<RpcResponse> future = requestMap.get(response.getRequestId());
+        if (future == null){
+            logger.error("the future is null,maybe because request {} is timeout");
+            return;
+        }
         future.setResponse(response);
     }
 
@@ -91,7 +95,7 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        logger.error("channel inactive with remoteAddress:[{}]",remoteAddress);
+        logger.error("channel inactive with remoteAddress:[{}]", remoteAddress);
         NettyNetClient.connectedServerNodes.remove(remoteAddress);
 
     }
@@ -109,11 +113,11 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
             byte[] data = messageProtocol.marshallingRequest(request);
             ByteBuf reqBuf = Unpooled.buffer(data.length);
             reqBuf.writeBytes(data);
-            if (latch.await(CHANNEL_WAIT_TIME,TimeUnit.SECONDS)){
+            if (latch.await(CHANNEL_WAIT_TIME, TimeUnit.SECONDS)) {
                 channel.writeAndFlush(reqBuf);
                 // 等待响应
                 response = future.get(RESPONSE_WAIT_TIME, TimeUnit.SECONDS);
-            }else {
+            } else {
                 throw new RpcException("establish channel time out");
             }
         } catch (Exception e) {
