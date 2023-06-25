@@ -67,19 +67,4 @@ public class RequestHandler {
     }
 
 
-    public MessageProtocol getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(MessageProtocol protocol) {
-        this.protocol = protocol;
-    }
-
-    public ServerRegister getServerRegister() {
-        return serverRegister;
-    }
-
-    public void setServerRegister(ServerRegister serverRegister) {
-        this.serverRegister = serverRegister;
-    }
 }

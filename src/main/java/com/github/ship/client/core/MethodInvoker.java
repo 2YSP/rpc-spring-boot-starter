@@ -8,12 +8,12 @@ package com.github.ship.client.core;
 public interface MethodInvoker {
 
     /**
-     *
      * @param interfaceClassName
      * @param methodName
      * @param parameterTypeNames
      * @param args
+     * @param generic
      * @return
      */
-    Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args,Boolean generic);
+    Object $invoke(String interfaceClassName, String methodName, String[] parameterTypeNames, Object[] args, Boolean generic);
 }
