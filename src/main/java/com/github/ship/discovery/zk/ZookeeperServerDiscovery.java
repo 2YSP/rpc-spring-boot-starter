@@ -1,11 +1,10 @@
 package com.github.ship.discovery.zk;
 
-import com.github.ship.client.cache.ServerDiscoveryCache;
-import com.github.ship.discovery.ServerDiscovery;
+import com.alibaba.fastjson.JSON;
 import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.model.Service;
 import com.github.ship.common.serializer.ZookeeperSerializer;
-import com.alibaba.fastjson.JSON;
+import com.github.ship.discovery.ServerDiscovery;
 import org.I0Itec.zkclient.ZkClient;
 
 import java.io.UnsupportedEncodingException;
@@ -17,10 +16,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.github.ship.common.constants.RpcConstant.*;
-import static com.github.ship.common.constants.RpcConstant.PATH_DELIMITER;
 
 /**
  * zk服务注册器，提供服务注册、暴露服务的能力
+ *
  * @author 2YSP
  * @date 2020/7/25 19:49
  */
@@ -35,6 +34,7 @@ public class ZookeeperServerDiscovery implements ServerDiscovery {
 
     /**
      * 服务暴露(其实就是把服务信息保存到Zookeeper上)
+     *
      * @param serviceResource
      */
     @Override
@@ -85,10 +85,8 @@ public class ZookeeperServerDiscovery implements ServerDiscovery {
 
 
     @Override
-    public void registerChangeListener() {
-        ServerDiscoveryCache.SERVICE_CLASS_NAMES.forEach(name -> {
-            String servicePath = RpcConstant.ZK_SERVICE_PATH + RpcConstant.PATH_DELIMITER + name + "/service";
-            zkClient.subscribeChildChanges(servicePath, new ZkChildListenerImpl());
-        });
+    public void registerChangeListener(String serviceName) {
+        String servicePath = RpcConstant.ZK_SERVICE_PATH + RpcConstant.PATH_DELIMITER + serviceName + "/service";
+        zkClient.subscribeChildChanges(servicePath, new ZkChildListenerImpl());
     }
 }

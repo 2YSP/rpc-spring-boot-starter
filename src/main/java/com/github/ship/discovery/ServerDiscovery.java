@@ -28,5 +28,5 @@ public interface ServerDiscovery {
     /**
      * 注册服务监听
      */
-    void registerChangeListener();
+    void registerChangeListener(String serviceName);
 }

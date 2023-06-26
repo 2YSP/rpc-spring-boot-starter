@@ -2,12 +2,12 @@ package com.github.ship.server.register;
 
 import com.github.ship.annotation.InjectService;
 import com.github.ship.annotation.Service;
-import com.github.ship.client.cache.ServerDiscoveryCache;
 import com.github.ship.client.manager.ServerDiscoveryManager;
 import com.github.ship.client.net.ClientProxyFactory;
 import com.github.ship.discovery.ServerRegister;
 import com.github.ship.discovery.ServiceObject;
 import com.github.ship.server.RpcServer;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,6 +60,7 @@ public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshed
     }
 
     private void injectService(ApplicationContext context) {
+        final List<String> serviceNameList = Lists.newArrayList();
         String[] names = context.getBeanDefinitionNames();
         for (String name : names) {
             Class<?> clazz = context.getType(name);
@@ -82,11 +84,13 @@ public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshed
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                ServerDiscoveryCache.SERVICE_CLASS_NAMES.add(fieldClass.getName());
+                serviceNameList.add(fieldClass.getName());
             }
         }
         // 注册子节点监听
-        serverDiscoveryManager.registerChangeListener();
+        serviceNameList.forEach(i -> {
+            serverDiscoveryManager.registerChangeListener(i);
+        });
         logger.info("register service change listener successfully");
     }
 

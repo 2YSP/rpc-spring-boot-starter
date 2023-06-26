@@ -89,26 +89,24 @@ public class NacosServerDiscovery implements ServerDiscovery {
     }
 
     @Override
-    public void registerChangeListener() {
-        ServerDiscoveryCache.SERVICE_CLASS_NAMES.forEach(serviceName -> {
-            try {
-                namingService.subscribe(serviceName, RpcConstant.NACOS_APP_GROUP_NAME, event -> {
-                    if (event instanceof NamingEvent) {
-                        List<Instance> instances = ((NamingEvent) event).getInstances();
-                        if (CollectionUtils.isEmpty(instances)) {
-                            ServerDiscoveryCache.removeAll(serviceName);
-                        }
-                        List<Service> serviceList = instances.stream().filter(i -> i.isHealthy()).map(this::convertToService).collect(Collectors.toList());
-                        if (CollectionUtils.isEmpty(serviceList)) {
-                            ServerDiscoveryCache.removeAll(serviceName);
-                        } else {
-                            ServerDiscoveryCache.put(serviceName, serviceList);
-                        }
+    public void registerChangeListener(String serviceName) {
+        try {
+            namingService.subscribe(serviceName, RpcConstant.NACOS_APP_GROUP_NAME, event -> {
+                if (event instanceof NamingEvent) {
+                    List<Instance> instances = ((NamingEvent) event).getInstances();
+                    if (CollectionUtils.isEmpty(instances)) {
+                        ServerDiscoveryCache.removeAll(serviceName);
                     }
-                });
-            } catch (NacosException e) {
-                e.printStackTrace();
-            }
-        });
+                    List<Service> serviceList = instances.stream().filter(i -> i.isHealthy()).map(this::convertToService).collect(Collectors.toList());
+                    if (CollectionUtils.isEmpty(serviceList)) {
+                        ServerDiscoveryCache.removeAll(serviceName);
+                    } else {
+                        ServerDiscoveryCache.put(serviceName, serviceList);
+                    }
+                }
+            });
+        } catch (NacosException e) {
+            e.printStackTrace();
+        }
     }
 }
