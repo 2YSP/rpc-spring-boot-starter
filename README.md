@@ -21,7 +21,7 @@
         <dependency>
             <groupId>io.github.2ysp</groupId>
             <artifactId>ship-rpc-spring-boot-starter</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>1.0.2-RELEASE</version>
         </dependency>
  ```
  ## 2.2 客户端
