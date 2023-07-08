@@ -16,13 +16,17 @@ public enum RpcStatusEnum {
     /**
      * NOT FOUND
      */
-    NOT_FOUND(404, "NOT FOUND");
+    NOT_FOUND(404, "NOT FOUND"),
+    /**
+     * REQUEST TIME OUT
+     */
+    REQUEST_TIME_OUT(504, "REQUEST TIME OUT");
 
     private Integer code;
 
     private String desc;
 
-    RpcStatusEnum(Integer code,String desc){
+    RpcStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

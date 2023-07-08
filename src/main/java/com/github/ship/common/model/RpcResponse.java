@@ -26,6 +26,15 @@ public class RpcResponse implements Serializable {
     public RpcResponse() {
     }
 
+    public RpcResponse(RpcStatusEnum rpcStatus) {
+        this.rpcStatus = rpcStatus.getCode();
+    }
+
+    public RpcResponse(RpcStatusEnum rpcStatus, String requestId) {
+        this.rpcStatus = rpcStatus.getCode();
+        this.requestId = requestId;
+    }
+
     public String getRequestId() {
         return requestId;
     }
@@ -34,9 +43,6 @@ public class RpcResponse implements Serializable {
         this.requestId = requestId;
     }
 
-    public RpcResponse(RpcStatusEnum rpcStatus) {
-        this.rpcStatus = rpcStatus.getCode();
-    }
 
     public Map<String, String> getHeaders() {
         return headers;

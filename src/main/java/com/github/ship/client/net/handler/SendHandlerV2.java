@@ -2,6 +2,7 @@ package com.github.ship.client.net.handler;
 
 import com.github.ship.client.net.NettyNetClient;
 import com.github.ship.client.net.RpcFuture;
+import com.github.ship.common.constants.RpcStatusEnum;
 import com.github.ship.common.model.RpcRequest;
 import com.github.ship.common.model.RpcResponse;
 import com.github.ship.spi.protocol.MessageProtocol;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author 2YSP
@@ -73,8 +75,8 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
         ReferenceCountUtil.release(byteBuf);
         RpcResponse response = messageProtocol.unmarshallingResponse(resp);
         RpcFuture<RpcResponse> future = requestMap.get(response.getRequestId());
-        if (future == null){
-            logger.error("the future is null,maybe because request {} is timeout");
+        if (future == null) {
+            logger.error("the future is null,maybe because request {} is timeout", response.getRequestId());
             return;
         }
         future.setResponse(response);
@@ -120,6 +122,8 @@ public class SendHandlerV2 extends ChannelInboundHandlerAdapter {
             } else {
                 throw new RpcException("establish channel time out");
             }
+        } catch (TimeoutException timeoutException) {
+            return new RpcResponse(RpcStatusEnum.REQUEST_TIME_OUT, request.getRequestId());
         } catch (Exception e) {
             throw new RpcException(e.getMessage());
         } finally {
