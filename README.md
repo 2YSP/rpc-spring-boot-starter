@@ -21,7 +21,7 @@
         <dependency>
             <groupId>io.github.2ysp</groupId>
             <artifactId>ship-rpc-spring-boot-starter</artifactId>
-            <version>1.0.2-RELEASE</version>
+            <version>1.0.3-RELEASE</version>
         </dependency>
  ```
  ## 2.2 客户端
@@ -78,8 +78,9 @@ public class GenericTestController {
 | --- | --- | --- |
 |   sp.rpc.protocol  | 消息序列化协议        |  java，protobuf，kryo，hessian   |
 |    sp.rpc.register-address |  注册中心地址      |  默认localhost:2181   |
-|    sp.rpc.register-center-type |  注册中心类型     | nacos<br>zk|
+|    sp.rpc.register-center-type |  注册中心类型，默认nacos     | nacos<br>zk|
 |    sp.rpc.load-balance |  负载均衡算法     | random<br>round<br>weightRound<br>smoothWeightRound|
+ |    sp.rpc.proxy-type |  客户端代理对象生成方式，默认JDK动态代理     | jdk<br>javassist|
 
  ## 2.3 服务端
  提供远程方法并注入IOC
@@ -113,7 +114,7 @@ public class UserServiceImpl implements UserService{
 | --- | --- | --- |
 |   sp.rpc.protocol  | 消息序列化协议        |  java，protobuf，kryo   |
 |    sp.rpc.register-address |  注册中心地址      |  默认localhost:2181   |
-|    sp.rpc.register-center-type |  注册中心类型     | nacos<br>zk|
+|    sp.rpc.register-center-type |  注册中心类型，默认nacos     | nacos<br>zk|
 |    sp.rpc.server-port |  服务端通信端口号     |  默认9999|
 | sp.rpc.weight | 权重 |默认1  |  
 
