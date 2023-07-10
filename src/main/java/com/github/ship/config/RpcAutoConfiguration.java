@@ -5,8 +5,13 @@ import com.github.ship.client.core.MethodInvoker;
 import com.github.ship.client.manager.LoadBalanceManager;
 import com.github.ship.client.manager.MessageProtocolsManager;
 import com.github.ship.client.manager.ServerDiscoveryManager;
-import com.github.ship.client.net.ClientProxyFactory;
+import com.github.ship.client.proxy.AbstractClientProxyFactory;
 import com.github.ship.client.net.NetClientFactory;
+import com.github.ship.client.proxy.ClientProxyFactory;
+import com.github.ship.client.proxy.impl.JavassistClientProxyFactory;
+import com.github.ship.client.proxy.impl.JdkClientProxyFactory;
+import com.github.ship.common.constants.ProxyTypeEnum;
+import com.github.ship.common.constants.RegisterCenterTypeEnum;
 import com.github.ship.common.exception.RpcException;
 import com.github.ship.config.properties.RpcConfig;
 import com.github.ship.discovery.ServerDiscovery;
@@ -47,14 +52,14 @@ public class RpcAutoConfiguration {
 
 
     @Bean
-    public ServerDiscovery nacosServerDiscovery() {
-        if ("nacos".equals(rpcConfig.getRegisterCenterType())) {
+    public ServerDiscovery serverDiscovery() {
+        if (RegisterCenterTypeEnum.NACOS.getCode().equals(rpcConfig.getRegisterCenterType())) {
             return new NacosServerDiscovery(rpcConfig.getRegisterAddress());
         }
-        if ("zk".equals(rpcConfig.getRegisterCenterType())) {
+        if (RegisterCenterTypeEnum.ZOOKEEPER.getCode().equals(rpcConfig.getRegisterCenterType())) {
             return new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress());
         }
-        throw new RpcException("注册中心类型配置错误");
+        throw new RpcException("invalid config of registerCenterType");
     }
 
     @Bean
@@ -85,9 +90,13 @@ public class RpcAutoConfiguration {
 
     @Bean
     public ClientProxyFactory proxyFactory(MethodInvoker methodInvoker) {
-        ClientProxyFactory clientProxyFactory = new ClientProxyFactory();
-        clientProxyFactory.setMethodInvoker(methodInvoker);
-        return clientProxyFactory;
+        if (ProxyTypeEnum.JAVASSIST.getCode().equals(rpcConfig.getProxyType())) {
+            return new JavassistClientProxyFactory(methodInvoker);
+        }
+        if (ProxyTypeEnum.JDK.getCode().equals(rpcConfig.getProxyType())) {
+            return new JdkClientProxyFactory(methodInvoker);
+        }
+        throw new RpcException("invalid config of proxyType!");
     }
 
     @Bean

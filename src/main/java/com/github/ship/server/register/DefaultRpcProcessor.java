@@ -3,7 +3,8 @@ package com.github.ship.server.register;
 import com.github.ship.annotation.InjectService;
 import com.github.ship.annotation.Service;
 import com.github.ship.client.manager.ServerDiscoveryManager;
-import com.github.ship.client.net.ClientProxyFactory;
+import com.github.ship.client.proxy.AbstractClientProxyFactory;
+import com.github.ship.client.proxy.ClientProxyFactory;
 import com.github.ship.discovery.ServerRegister;
 import com.github.ship.discovery.ServiceObject;
 import com.github.ship.server.RpcServer;
@@ -80,8 +81,11 @@ public class DefaultRpcProcessor implements ApplicationListener<ContextRefreshed
                 Object object = context.getBean(name);
                 field.setAccessible(true);
                 try {
-                    field.set(object, clientProxyFactory.getProxy(fieldClass));
+                    Object proxy = clientProxyFactory.getProxy(fieldClass);
+                    field.set(object, proxy);
                 } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 serviceNameList.add(fieldClass.getName());

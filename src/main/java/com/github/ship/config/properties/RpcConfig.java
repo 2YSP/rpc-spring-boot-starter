@@ -18,9 +18,9 @@ public class RpcConfig {
      */
     private String registerAddress = "127.0.0.1:2181";
     /**
-     * 注册中心类型
+     * 注册中心类型，默认nacos
      */
-    private String registerCenterType;
+    private String registerCenterType = "nacos";
 
     /**
      * 服务暴露端口
@@ -38,12 +38,24 @@ public class RpcConfig {
      * 权重，默认为1
      */
     private Integer weight = 1;
+    /**
+     * 客户端代理对象生成方式，默认JDK动态代理
+     */
+    private String proxyType = "jdk";
 
     @PostConstruct
     public void check() {
         if (RegisterCenterTypeEnum.getByCode(this.registerCenterType) == null) {
             throw new RpcException("注册中心类型配置错误！");
         }
+    }
+
+    public String getProxyType() {
+        return proxyType;
+    }
+
+    public void setProxyType(String proxyType) {
+        this.proxyType = proxyType;
     }
 
     public String getRegisterCenterType() {

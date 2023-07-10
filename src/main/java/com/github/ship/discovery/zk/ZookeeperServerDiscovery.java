@@ -32,6 +32,10 @@ public class ZookeeperServerDiscovery implements ServerDiscovery {
         zkClient.setZkSerializer(new ZookeeperSerializer());
     }
 
+    public static void main(String[] args) {
+        System.out.println(System.getProperty("user.dir"));
+    }
+
     /**
      * 服务暴露(其实就是把服务信息保存到Zookeeper上)
      *
