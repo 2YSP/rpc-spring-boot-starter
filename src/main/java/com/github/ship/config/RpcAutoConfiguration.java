@@ -5,11 +5,11 @@ import com.github.ship.client.core.MethodInvoker;
 import com.github.ship.client.manager.LoadBalanceManager;
 import com.github.ship.client.manager.MessageProtocolsManager;
 import com.github.ship.client.manager.ServerDiscoveryManager;
-import com.github.ship.client.proxy.AbstractClientProxyFactory;
 import com.github.ship.client.net.NetClientFactory;
 import com.github.ship.client.proxy.ClientProxyFactory;
 import com.github.ship.client.proxy.impl.JavassistClientProxyFactory;
 import com.github.ship.client.proxy.impl.JdkClientProxyFactory;
+import com.github.ship.client.proxy.impl.JdkCompilerClientProxyFactory;
 import com.github.ship.common.constants.ProxyTypeEnum;
 import com.github.ship.common.constants.RegisterCenterTypeEnum;
 import com.github.ship.common.exception.RpcException;
@@ -95,6 +95,9 @@ public class RpcAutoConfiguration {
         }
         if (ProxyTypeEnum.JDK.getCode().equals(rpcConfig.getProxyType())) {
             return new JdkClientProxyFactory(methodInvoker);
+        }
+        if (ProxyTypeEnum.COMPILER.getCode().equals(rpcConfig.getProxyType())) {
+            return new JdkCompilerClientProxyFactory(methodInvoker);
         }
         throw new RpcException("invalid config of proxyType!");
     }

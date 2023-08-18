@@ -16,7 +16,11 @@ public enum ProxyTypeEnum {
     /**
      * javassist字节码生成
      */
-    JAVASSIST("javassist", "javassist字节码生成");
+    JAVASSIST("javassist", "javassist字节码生成"),
+    /**
+     * java动态编译
+     */
+    COMPILER("compiler","java动态编译");
 
     private String code;
 
