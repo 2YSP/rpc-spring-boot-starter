@@ -66,7 +66,7 @@ public class JdkCompilerClientProxyFactory extends AbstractClientProxyFactory {
         String fullClassName = clazz.getName() + "Impl";
         int i = fullClassName.lastIndexOf('.');
         // eg: UserServiceImpl
-        String className = fullClassName.substring(i);
+        String className = fullClassName.substring(i + 1);
         String packageName = fullClassName.substring(0, i);
         String sourceCode = generateSourceCode(className, packageName, clazz);
         JavaFileObjectImpl javaFileObject = new JavaFileObjectImpl(className, sourceCode);
@@ -75,7 +75,12 @@ public class JdkCompilerClientProxyFactory extends AbstractClientProxyFactory {
         // 编译代码
         Boolean result = task.call();
         if (result == null || !result) {
-            throw new RpcException("Compilation fail. " + diagnosticCollector);
+            logger.error("Compilation fail.");
+            List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticCollector.getDiagnostics();
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
+                logger.error(diagnostic.getMessage(null));
+            }
+            throw new RpcException("Compilation fail. ");
         }
         try {
             Class<?> implClass = classLoader.loadClass(fullClassName);

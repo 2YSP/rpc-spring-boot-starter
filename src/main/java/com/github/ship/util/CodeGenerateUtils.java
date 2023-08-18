@@ -16,6 +16,7 @@ public class CodeGenerateUtils {
 
     /**
      * 构建Javassist需要的方法体
+     *
      * @param interfaceClazz
      * @param method
      * @return
@@ -30,12 +31,15 @@ public class CodeGenerateUtils {
 
     /**
      * 构建JavaCompiler需要的方法体
+     *
      * @param interfaceClazz
      * @param method
      * @return
      */
     public static String genJavaCompilerMethodBody(Class interfaceClazz, Method method) {
-        String methodBody = String.format("{\n  return methodInvoker.$invoke(\"%s\", \"%s\", new String[]{%s},new Object[]{%s}, Boolean.FALSE);\n}",
+        String returnTypeName = method.getReturnType().getName();
+        String methodBody = String.format("{\n  return (%s)methodInvoker.$invoke(\"%s\", \"%s\", new String[]{%s},new Object[]{%s}, Boolean.FALSE);\n}",
+                returnTypeName,
                 interfaceClazz.getName(),
                 method.getName(),
                 buildParameters(method), buildRealParameterNames(method));
