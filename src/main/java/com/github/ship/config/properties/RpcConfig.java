@@ -1,10 +1,6 @@
 package com.github.ship.config.properties;
 
-import com.github.ship.common.constants.RegisterCenterTypeEnum;
-import com.github.ship.common.exception.RpcException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author 2YSP
@@ -43,12 +39,6 @@ public class RpcConfig {
      */
     private String proxyType = "jdk";
 
-    @PostConstruct
-    public void check() {
-        if (RegisterCenterTypeEnum.getByCode(this.registerCenterType) == null) {
-            throw new RpcException("注册中心类型配置错误！");
-        }
-    }
 
     public String getProxyType() {
         return proxyType;
