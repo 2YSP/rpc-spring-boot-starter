@@ -11,7 +11,7 @@
 - 客户端调用支持多种负载均衡算法，包括随机、轮询、加权轮询和平滑加权轮询
 - 支持主流注册中心Nacos和Zookeeper
 - 支持泛化调用
-- 客户端代理对象生成方式支持JDK动态代理和Javassist字节码生成
+- 客户端代理对象生成方式支持JDK动态代理、Javassist字节码和Java动态编译生成
 
 # 二、使用方法
 
@@ -81,8 +81,9 @@ public class GenericTestController {
 |    sp.rpc.register-address |  注册中心地址      |  默认localhost:2181   |
 |    sp.rpc.register-center-type |  注册中心类型，默认nacos     | nacos<br>zk|
 |    sp.rpc.load-balance |  负载均衡算法     | random<br>round<br>weightRound<br>smoothWeightRound|
- |    sp.rpc.proxy-type |  客户端代理对象生成方式，默认JDK动态代理     | jdk<br>javassist|
+ |    sp.rpc.proxy-type |  客户端代理对象生成方式，默认JDK动态代理     | jdk<br>javassist<br>compiler|
 
+建议使用Javassist字节码或Java动态编译的方式，性能更好。
  ## 2.3 服务端
  提供远程方法并注入IOC
 
