@@ -7,18 +7,13 @@ import com.github.ship.client.manager.MessageProtocolsManager;
 import com.github.ship.client.manager.ServerDiscoveryManager;
 import com.github.ship.client.net.NetClientFactory;
 import com.github.ship.client.proxy.ClientProxyFactory;
-import com.github.ship.client.proxy.impl.JavassistClientProxyFactory;
-import com.github.ship.client.proxy.impl.JdkClientProxyFactory;
-import com.github.ship.client.proxy.impl.JdkCompilerClientProxyFactory;
 import com.github.ship.common.constants.ProxyTypeEnum;
 import com.github.ship.common.constants.RegisterCenterTypeEnum;
 import com.github.ship.common.exception.RpcException;
 import com.github.ship.config.properties.RpcConfig;
 import com.github.ship.discovery.ServerDiscovery;
 import com.github.ship.discovery.ServerRegister;
-import com.github.ship.discovery.nacos.NacosServerDiscovery;
 import com.github.ship.discovery.register.DefaultServerRegister;
-import com.github.ship.discovery.zk.ZookeeperServerDiscovery;
 import com.github.ship.server.NettyRpcServer;
 import com.github.ship.server.RequestHandler;
 import com.github.ship.server.RpcServer;
@@ -32,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Constructor;
 
 /**
  * 注入需要的bean
@@ -53,13 +49,13 @@ public class RpcAutoConfiguration {
 
     @Bean
     public ServerDiscovery serverDiscovery() {
-        if (RegisterCenterTypeEnum.NACOS.getCode().equals(rpcConfig.getRegisterCenterType())) {
-            return new NacosServerDiscovery(rpcConfig.getRegisterAddress());
+        RegisterCenterTypeEnum registerCenterTypeEnum = RegisterCenterTypeEnum.getByCode(rpcConfig.getRegisterCenterType());
+        try {
+            Constructor con = registerCenterTypeEnum.getClazz().getConstructor(String.class);
+            return (ServerDiscovery) con.newInstance(rpcConfig.getRegisterAddress());
+        } catch (Exception e) {
+            throw new RpcException("init ServerDiscovery bean exception:" + e.getMessage());
         }
-        if (RegisterCenterTypeEnum.ZOOKEEPER.getCode().equals(rpcConfig.getRegisterCenterType())) {
-            return new ZookeeperServerDiscovery(rpcConfig.getRegisterAddress());
-        }
-        throw new RpcException("invalid config of registerCenterType");
     }
 
     @Bean
@@ -90,16 +86,14 @@ public class RpcAutoConfiguration {
 
     @Bean
     public ClientProxyFactory proxyFactory(MethodInvoker methodInvoker) {
-        if (ProxyTypeEnum.JAVASSIST.getCode().equals(rpcConfig.getProxyType())) {
-            return new JavassistClientProxyFactory(methodInvoker);
+        ProxyTypeEnum proxyTypeEnum = ProxyTypeEnum.getByCode(rpcConfig.getProxyType());
+        try {
+            // 反射创建实例  用SPI也可以但是没法按需加载
+            Constructor con = proxyTypeEnum.getClientProxyFactoryClass().getConstructor(MethodInvoker.class);
+            return (ClientProxyFactory) con.newInstance(methodInvoker);
+        } catch (Exception e) {
+            throw new RpcException("init ClientProxyFactory bean exception:" + e.getMessage());
         }
-        if (ProxyTypeEnum.JDK.getCode().equals(rpcConfig.getProxyType())) {
-            return new JdkClientProxyFactory(methodInvoker);
-        }
-        if (ProxyTypeEnum.COMPILER.getCode().equals(rpcConfig.getProxyType())) {
-            return new JdkCompilerClientProxyFactory(methodInvoker);
-        }
-        throw new RpcException("invalid config of proxyType!");
     }
 
     @Bean

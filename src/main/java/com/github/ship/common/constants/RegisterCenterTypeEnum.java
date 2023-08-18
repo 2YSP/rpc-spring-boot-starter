@@ -1,5 +1,9 @@
 package com.github.ship.common.constants;
 
+import com.github.ship.common.exception.RpcException;
+import com.github.ship.discovery.nacos.NacosServerDiscovery;
+import com.github.ship.discovery.zk.ZookeeperServerDiscovery;
+
 import java.util.Arrays;
 
 /**
@@ -10,16 +14,19 @@ import java.util.Arrays;
  */
 public enum RegisterCenterTypeEnum {
 
-    ZOOKEEPER("zk", "zookeeper"),
-    NACOS("nacos", "nacos");
+    ZOOKEEPER("zk", "zookeeper", ZookeeperServerDiscovery.class),
+    NACOS("nacos", "nacos", NacosServerDiscovery.class);
 
     private String code;
 
     private String desc;
 
-    RegisterCenterTypeEnum(String code, String desc) {
+    private Class clazz;
+
+    RegisterCenterTypeEnum(String code, String desc, Class clazz) {
         this.code = code;
         this.desc = desc;
+        this.clazz = clazz;
     }
 
     public String getCode() {
@@ -30,8 +37,13 @@ public enum RegisterCenterTypeEnum {
         return desc;
     }
 
+    public Class getClazz() {
+        return clazz;
+    }
+
     public static RegisterCenterTypeEnum getByCode(String code) {
-        return Arrays.asList(values()).stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
+        return Arrays.asList(values()).stream().filter(i -> i.getCode().equals(code)).findFirst()
+                .orElseThrow(() -> new RpcException("invalid config of registerCenterType"));
     }
 
 }
