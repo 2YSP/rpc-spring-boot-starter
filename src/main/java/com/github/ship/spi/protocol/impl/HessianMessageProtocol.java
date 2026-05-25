@@ -1,7 +1,5 @@
 package com.github.ship.spi.protocol.impl;
 
-import com.github.ship.annotation.MessageProtocolAno;
-import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.constants.RpcStatusEnum;
 import com.github.ship.common.model.RpcRequest;
 import com.github.ship.common.model.RpcResponse;
@@ -24,7 +22,6 @@ import java.util.Map;
  * @description:
  * @date 2023/06/15 14:00
  */
-@MessageProtocolAno(RpcConstant.PROTOCOL_HESSIAN)
 public class HessianMessageProtocol implements MessageProtocol {
 
     private final static SerializerFactory serializerFactory = new SerializerFactory();

@@ -1,7 +1,5 @@
 package com.github.ship.spi.balance.impl;
 
-import com.github.ship.annotation.LoadBalanceAno;
-import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.model.Service;
 import com.github.ship.spi.balance.LoadBalance;
 
@@ -10,7 +8,6 @@ import java.util.List;
 /**
  * 加权轮询
  */
-@LoadBalanceAno(RpcConstant.BALANCE_WEIGHT_ROUND)
 public class WeightRoundBalance implements LoadBalance {
 
     private static int index;

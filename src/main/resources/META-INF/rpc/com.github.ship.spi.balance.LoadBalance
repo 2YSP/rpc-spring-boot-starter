@@ -1,0 +1,4 @@
+random=com.github.ship.spi.balance.impl.RandomBalance
+round=com.github.ship.spi.balance.impl.FullRoundBalance
+weightRound=com.github.ship.spi.balance.impl.WeightRoundBalance
+smoothWeightRound=com.github.ship.spi.balance.impl.SmoothWeightRoundBalance

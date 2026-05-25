@@ -2,12 +2,14 @@ package com.github.ship.spi.protocol;
 
 import com.github.ship.common.model.RpcRequest;
 import com.github.ship.common.model.RpcResponse;
+import com.github.ship.spi.SPI;
 
 /**
  *消息协议:定义编组请求、解组请求、编组响应、解组响应的规范
  * @author 2YSP
  * @date 2020/7/25 21:01
  */
+@SPI("java")
 public interface MessageProtocol {
     /**
      * 编组请求

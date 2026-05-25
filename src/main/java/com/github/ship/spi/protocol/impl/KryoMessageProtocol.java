@@ -1,7 +1,5 @@
 package com.github.ship.spi.protocol.impl;
 
-import com.github.ship.annotation.MessageProtocolAno;
-import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.model.RpcRequest;
 import com.github.ship.common.model.RpcResponse;
 import com.github.ship.spi.protocol.MessageProtocol;
@@ -17,7 +15,6 @@ import java.io.ByteArrayOutputStream;
  * Kryo实现序列化和反序列化
  * 注意：kryo不是线程安全的
  */
-@MessageProtocolAno(RpcConstant.PROTOCOL_KRYO)
 public class KryoMessageProtocol implements MessageProtocol {
 
     private static final ThreadLocal<Kryo> kryoLocal = new ThreadLocal<Kryo>() {

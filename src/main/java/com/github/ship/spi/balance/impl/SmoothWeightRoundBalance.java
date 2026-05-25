@@ -1,7 +1,5 @@
 package com.github.ship.spi.balance.impl;
 
-import com.github.ship.annotation.LoadBalanceAno;
-import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.model.Service;
 import com.github.ship.spi.balance.LoadBalance;
 
@@ -12,7 +10,6 @@ import java.util.Map;
 /**
  * 平滑加权轮询
  */
-@LoadBalanceAno(RpcConstant.BALANCE_SMOOTH_WEIGHT_ROUND)
 public class SmoothWeightRoundBalance implements LoadBalance {
     /**
      * key:服务value:当前权重

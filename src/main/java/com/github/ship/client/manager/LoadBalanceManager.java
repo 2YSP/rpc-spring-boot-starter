@@ -1,11 +1,8 @@
 package com.github.ship.client.manager;
 
-import com.github.ship.annotation.LoadBalanceAno;
 import com.github.ship.common.exception.RpcException;
+import com.github.ship.spi.ExtensionLoader;
 import com.github.ship.spi.balance.LoadBalance;
-import org.springframework.util.Assert;
-
-import java.util.*;
 
 /**
  * @Author: Ship
@@ -14,18 +11,7 @@ import java.util.*;
  */
 public class LoadBalanceManager {
 
-    private static final Map<String, LoadBalance> LOAD_BALANCE_MAP = new HashMap<>();
-
-    static {
-        ServiceLoader<LoadBalance> loader = ServiceLoader.load(LoadBalance.class);
-        Iterator<LoadBalance> iterator = loader.iterator();
-        while (iterator.hasNext()) {
-            LoadBalance loadBalance = iterator.next();
-            LoadBalanceAno ano = loadBalance.getClass().getAnnotation(LoadBalanceAno.class);
-            Assert.notNull(ano, "load balance name can not be empty!");
-            LOAD_BALANCE_MAP.put(ano.value(), loadBalance);
-        }
-    }
+    private static final ExtensionLoader<LoadBalance> EXTENSION_LOADER = ExtensionLoader.getExtensionLoader(LoadBalance.class);
 
     /**
      * 使用spi匹配符合配置的负载均衡算法
@@ -33,10 +19,10 @@ public class LoadBalanceManager {
      * @return
      */
     public static LoadBalance getLoadBalance(String name) {
-        Optional<LoadBalance> optional = Optional.of(LOAD_BALANCE_MAP.get(name));
-        if (optional.isPresent()) {
-            return optional.get();
+        LoadBalance loadBalance = EXTENSION_LOADER.getExtension(name);
+        if (loadBalance == null) {
+            throw new RpcException("invalid load balance config: " + name);
         }
-        throw new RpcException("invalid load balance config");
+        return loadBalance;
     }
 }

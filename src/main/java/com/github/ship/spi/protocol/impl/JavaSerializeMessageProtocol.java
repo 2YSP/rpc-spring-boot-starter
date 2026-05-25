@@ -1,8 +1,6 @@
 package com.github.ship.spi.protocol.impl;
 
 
-import com.github.ship.annotation.MessageProtocolAno;
-import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.model.RpcRequest;
 import com.github.ship.common.model.RpcResponse;
 import com.github.ship.spi.protocol.MessageProtocol;
@@ -19,7 +17,6 @@ import java.io.ObjectOutputStream;
  * @author 2YSP
  * @date 2020/7/25 21:07
  */
-@MessageProtocolAno(RpcConstant.PROTOCOL_JAVA)
 public class JavaSerializeMessageProtocol implements MessageProtocol {
 
     private byte[] serialize(Object o) throws IOException {

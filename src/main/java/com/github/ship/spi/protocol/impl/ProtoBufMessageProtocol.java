@@ -1,7 +1,5 @@
 package com.github.ship.spi.protocol.impl;
 
-import com.github.ship.annotation.MessageProtocolAno;
-import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.model.RpcRequest;
 import com.github.ship.common.model.RpcResponse;
 import com.github.ship.spi.protocol.MessageProtocol;
@@ -12,7 +10,6 @@ import com.github.ship.util.SerializingUtil;
  * @author 2YSP
  * @date 2020/8/5 21:22
  */
-@MessageProtocolAno(RpcConstant.PROTOCOL_PROTOBUF)
 public class ProtoBufMessageProtocol implements MessageProtocol {
 
     @Override

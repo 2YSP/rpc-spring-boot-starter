@@ -1,7 +1,5 @@
 package com.github.ship.spi.balance.impl;
 
-import com.github.ship.annotation.LoadBalanceAno;
-import com.github.ship.common.constants.RpcConstant;
 import com.github.ship.common.model.Service;
 import com.github.ship.spi.balance.LoadBalance;
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import java.util.List;
 /**
  * 轮询算法
  */
-@LoadBalanceAno(RpcConstant.BALANCE_ROUND)
 public class FullRoundBalance implements LoadBalance {
 
     private static Logger logger = LoggerFactory.getLogger(FullRoundBalance.class);
